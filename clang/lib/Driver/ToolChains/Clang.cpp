@@ -14,6 +14,7 @@
 #include "Arch/LoongArch.h"
 #include "Arch/M68k.h"
 #include "Arch/Mips.h"
+#include "Arch/Postrisc.h"
 #include "Arch/PPC.h"
 #include "Arch/RISCV.h"
 #include "Arch/Sparc.h"
@@ -1688,6 +1689,10 @@ void Clang::RenderTargetOptions(const llvm::Triple &EffectiveTriple,
   case llvm::Triple::ve:
     AddVETargetArgs(Args, CmdArgs);
     break;
+
+  case llvm::Triple::postrisc:
+    AddPostriscTargetArgs(Args, CmdArgs);
+    break;
   }
 }
 
@@ -2343,6 +2348,36 @@ void Clang::AddVETargetArgs(const ArgList &Args, ArgStringList &CmdArgs) const {
   // Floating point operations and argument passing are hard.
   CmdArgs.push_back("-mfloat-abi");
   CmdArgs.push_back("hard");
+}
+
+void Clang::AddPostriscTargetArgs(const ArgList &Args,
+                               ArgStringList &CmdArgs) const {
+  postrisc::FloatABI FloatABI =
+      postrisc::getPostriscFloatABI(getToolChain().getDriver(), Args);
+
+  if (FloatABI == postrisc::FloatABI::Soft) {
+    // Floating point operations and argument passing are soft.
+    CmdArgs.push_back("-msoft-float");
+    CmdArgs.push_back("-mfloat-abi");
+    CmdArgs.push_back("soft");
+  } else {
+    // Floating point operations and argument passing are hard.
+    assert(FloatABI == postrisc::FloatABI::Hard && "Invalid float abi!");
+    CmdArgs.push_back("-mfloat-abi");
+    CmdArgs.push_back("hard");
+  }
+
+  if (const Arg *A = Args.getLastArg(clang::driver::options::OPT_mtune_EQ)) {
+    StringRef Name = A->getValue();
+    std::string TuneCPU;
+    if (Name == "native")
+      TuneCPU = std::string(llvm::sys::getHostCPUName());
+    else
+      TuneCPU = std::string(Name);
+
+    CmdArgs.push_back("-tune-cpu");
+    CmdArgs.push_back(Args.MakeArgString(TuneCPU));
+  }
 }
 
 void Clang::DumpCompilationDatabase(Compilation &C, StringRef Filename,
@@ -5956,6 +5991,9 @@ void Clang::ConstructJob(Compilation &C, const JobAction &JA,
       else if (CM == "medany")
         CM = "large";
       Ok = CM == "small" || CM == "medium" || CM == "large";
+    } else if (Triple.getArch() == llvm::Triple::postrisc) {
+      Ok = llvm::is_contained({"small", "kernel", "medium", "large", "tiny"},
+                              CM);
     }
     if (Ok) {
       CmdArgs.push_back(Args.MakeArgString("-mcmodel=" + CM));
