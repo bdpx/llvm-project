@@ -315,6 +315,11 @@ Linux::Linux(const Driver &D, const llvm::Triple &Triple, const ArgList &Args)
   // to the link paths.
   path_list &Paths = getFilePaths();
 
+  // FIXME: temp muls build path, add first
+  //addPathIfExists(D, concat(SysRoot, "/postrisc/musl_postrisc/lib"), Paths);
+  // FIXME: don't add another paths
+  //return;
+
   const std::string OSLibDir = std::string(getOSLibDir(Triple, Args));
   const std::string MultiarchTriple = getMultiarchTriple(D, Triple, SysRoot);
 
@@ -558,6 +563,10 @@ std::string Linux::getDynamicLinker(const ArgList &Args) const {
 
     break;
   }
+  case llvm::Triple::postrisc:
+    LibDir = "lib";
+    Loader = "ld-linux.postrisc.so.2";
+    break;
   case llvm::Triple::ppc:
     LibDir = "lib";
     Loader = "ld.so.1";
@@ -869,5 +878,10 @@ void Linux::addExtraOpts(llvm::opt::ArgStringList &CmdArgs) const {
 const char *Linux::getDefaultLinker() const {
   if (getTriple().isAndroid())
     return "ld.lld";
+
+  // FIXME: temp hack to call linker from build
+  if (getTriple().getArch() == llvm::Triple::postrisc)
+    return __LLVM_BUILD_DIR__ "/bin/ld.lld";
+
   return Generic_ELF::getDefaultLinker();
 }
