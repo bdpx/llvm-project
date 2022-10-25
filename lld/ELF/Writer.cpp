@@ -667,9 +667,17 @@ enum RankFlags {
   RF_LARGE_EXEC_WRITE = 1 << 16,
   RF_LARGE_ALT = 1 << 15,
   RF_WRITE = 1 << 14,
+#if defined(__POSTRISC__)
+  // move rodata after any exec because we support only
+  // positive forward ip-relative offsets for data access
+  RF_RODATA = 1 << 13,
+  RF_EXEC_WRITE = 1 << 12,
+  RF_EXEC = 1 << 11,
+#else
   RF_EXEC_WRITE = 1 << 13,
   RF_EXEC = 1 << 12,
   RF_RODATA = 1 << 11,
+#endif
   RF_LARGE_EXEC = 1 << 10,
   RF_LARGE = 1 << 9,
   RF_NOT_RELRO = 1 << 8,
@@ -2256,8 +2264,16 @@ template <class ELFT> void Writer<ELFT>::addStartEndSymbols() {
       if (startSym || stopSym)
         os->usedInExpression = true;
     } else {
+#if defined(__POSTRISC__)
+      OutputSection *Default = findSection(ctx, ".rodata");
+      if (!Default)
+        Default = ctx.out.elfHeader.get();
+      addOptionalRegular(ctx, start, Default, 0);
+      addOptionalRegular(ctx, end, Default, 0);
+#else
       addOptionalRegular(ctx, start, ctx.out.elfHeader.get(), 0);
       addOptionalRegular(ctx, end, ctx.out.elfHeader.get(), 0);
+#endif
     }
   };
 

@@ -1473,6 +1473,9 @@ DynamicSection<ELFT>::computeContents() {
     case EM_SPARCV9:
       addInSec(DT_PLTGOT, *ctx.in.plt);
       break;
+    case EM_POSTRISC:
+      addInSec(DT_PLTGOT, *ctx.in.plt);
+      break;
     case EM_AARCH64:
       if (llvm::find_if(ctx.in.relaPlt->relocs, [&ctx = ctx](
                                                     const DynamicReloc &r) {
