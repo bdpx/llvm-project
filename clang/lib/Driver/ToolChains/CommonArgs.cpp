@@ -13,6 +13,7 @@
 #include "Arch/LoongArch.h"
 #include "Arch/M68k.h"
 #include "Arch/Mips.h"
+#include "Arch/Postrisc.h"
 #include "Arch/PPC.h"
 #include "Arch/RISCV.h"
 #include "Arch/Sparc.h"
@@ -119,6 +120,7 @@ static bool useFramePointerForTargetByDefault(const llvm::opt::ArgList &Args,
   case llvm::Triple::mips64el:
   case llvm::Triple::mips:
   case llvm::Triple::mipsel:
+  case llvm::Triple::postrisc:
     return !clang::driver::tools::areOptimizationsEnabled(Args);
   default:
     break;
@@ -659,6 +661,8 @@ const char *tools::getLDMOption(const llvm::Triple &T, const ArgList &Args) {
     if (T.isOSLinux())
       return "cskyelf_linux";
     return "cskyelf";
+  case llvm::Triple::postrisc:
+    return "elf64_postrisc";
   default:
     return nullptr;
   }
@@ -891,6 +895,9 @@ std::string tools::getCPUName(const Driver &D, const ArgList &Args,
     if (const Arg *A = Args.getLastArg(options::OPT_mcpu_EQ))
       return A->getValue();
     return "";
+
+  case llvm::Triple::postrisc:
+    return postrisc::getPostriscTargetCPU(D, Args, T);
   }
 }
 
@@ -980,6 +987,9 @@ void tools::getTargetFeatures(const Driver &D, const llvm::Triple &Triple,
   case llvm::Triple::loongarch32:
   case llvm::Triple::loongarch64:
     loongarch::getLoongArchTargetFeatures(D, Triple, Args, Features);
+    break;
+  case llvm::Triple::postrisc:
+    postrisc::getPostriscTargetFeatures(D, Args, Features);
     break;
   }
 
@@ -3154,6 +3164,8 @@ void tools::addMCModel(const Driver &D, const llvm::opt::ArgList &Args,
       Ok = CM == "small" || CM == "medium" || CM == "large";
     } else if (Triple.getArch() == llvm::Triple::lanai) {
       Ok = llvm::is_contained({"small", "medium", "large"}, CM);
+    } else if (Triple.getArch() == llvm::Triple::postrisc) {
+      Ok = llvm::is_contained({"small", "kernel", "medium", "large", "tiny"}, CM);
     }
     if (Ok) {
       CmdArgs.push_back(Args.MakeArgString("-mcmodel=" + CM));
