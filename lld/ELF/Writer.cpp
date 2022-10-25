@@ -620,9 +620,17 @@ enum RankFlags {
   RF_PARTITION = 1 << 18, // Partition number (8 bits)
   RF_LARGE_ALT = 1 << 15,
   RF_WRITE = 1 << 14,
+#if defined(__POSTRISC__)
+  // move rodata after any exec because we support only
+  // positive forward ip-relative offsets for data access
+  RF_RODATA = 1 << 13,
+  RF_EXEC_WRITE = 1 << 12,
+  RF_EXEC = 1 << 11,
+#else
   RF_EXEC_WRITE = 1 << 13,
   RF_EXEC = 1 << 12,
   RF_RODATA = 1 << 11,
+#endif
   RF_LARGE = 1 << 10,
   RF_NOT_RELRO = 1 << 9,
   RF_NOT_TLS = 1 << 8,
@@ -2080,7 +2088,13 @@ template <class ELFT> void Writer<ELFT>::addStartEndSymbols() {
   //
   // In rare situations, the .text section may not exist. If that's the
   // case, use the image base address as a last resort.
+#if defined(__POSTRISC__)
+  // __init/fini_array_start/end are arrays of pointers.
+  // it should be addressed as data with forward addressing mode.
+  OutputSection *Default = findSection(".rodata");
+#else
   OutputSection *Default = findSection(".text");
+#endif
   if (!Default)
     Default = Out::elfHeader;
 

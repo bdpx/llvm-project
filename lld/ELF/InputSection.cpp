@@ -668,6 +668,7 @@ static int64_t getTlsTpOffset(const Symbol &s) {
   case EM_SPARCV9:
   case EM_386:
   case EM_X86_64:
+  case EM_POSTRISC:
     return s.getVA(0) - tls->p_memsz -
            ((-tls->p_vaddr - tls->p_memsz) & (tls->p_align - 1));
   default:
