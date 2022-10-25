@@ -10,6 +10,7 @@
 #include "Arch/ARM.h"
 #include "Arch/LoongArch.h"
 #include "Arch/Mips.h"
+#include "Arch/Postrisc.h"
 #include "Arch/PPC.h"
 #include "Arch/RISCV.h"
 #include "Arch/Sparc.h"
@@ -1602,6 +1603,10 @@ void Clang::RenderTargetOptions(const llvm::Triple &EffectiveTriple,
   case llvm::Triple::ve:
     AddVETargetArgs(Args, CmdArgs);
     break;
+
+  case llvm::Triple::postrisc:
+    AddPostriscTargetArgs(Args, CmdArgs);
+    break;
   }
 }
 
@@ -2277,6 +2282,49 @@ void Clang::AddVETargetArgs(const ArgList &Args, ArgStringList &CmdArgs) const {
   // Floating point operations and argument passing are hard.
   CmdArgs.push_back("-mfloat-abi");
   CmdArgs.push_back("hard");
+}
+
+void Clang::AddPostriscTargetArgs(const ArgList &Args,
+                               ArgStringList &CmdArgs) const {
+  postrisc::FloatABI FloatABI =
+      postrisc::getPostriscFloatABI(getToolChain().getDriver(), Args);
+
+  if (FloatABI == postrisc::FloatABI::Soft) {
+    // Floating point operations and argument passing are soft.
+    CmdArgs.push_back("-msoft-float");
+    CmdArgs.push_back("-mfloat-abi");
+    CmdArgs.push_back("soft");
+  } else {
+    // Floating point operations and argument passing are hard.
+    assert(FloatABI == postrisc::FloatABI::Hard && "Invalid float abi!");
+    CmdArgs.push_back("-mfloat-abi");
+    CmdArgs.push_back("hard");
+  }
+
+  if (const Arg *A = Args.getLastArg(options::OPT_mtune_EQ)) {
+    StringRef Name = A->getValue();
+    std::string TuneCPU;
+    if (Name == "native")
+      TuneCPU = std::string(llvm::sys::getHostCPUName());
+    else
+      TuneCPU = std::string(Name);
+
+    CmdArgs.push_back("-tune-cpu");
+    CmdArgs.push_back(Args.MakeArgString(TuneCPU));
+  }
+
+  if (Args.getLastArg(options::OPT_mvvm)) {
+    CmdArgs.push_back("-mllvm");
+    CmdArgs.push_back("-enable-vvm");
+  }
+  if (Args.getLastArg(options::OPT_mpred)) {
+    CmdArgs.push_back("-mllvm");
+    CmdArgs.push_back("-enable-predication");
+  }
+  if (Args.getLastArg(options::OPT_mpred2)) {
+    CmdArgs.push_back("-mllvm");
+    CmdArgs.push_back("-enable-predication2");
+  }
 }
 
 void Clang::DumpCompilationDatabase(Compilation &C, StringRef Filename,
@@ -8626,6 +8674,11 @@ void ClangAs::AddLoongArchTargetArgs(const ArgList &Args,
                         .data());
 }
 
+void ClangAs::AddPostriscTargetArgs(const llvm::opt::ArgList &Args,
+                         llvm::opt::ArgStringList &CmdArgs) const {
+  // TODO
+}
+
 void ClangAs::AddRISCVTargetArgs(const ArgList &Args,
                                ArgStringList &CmdArgs) const {
   const llvm::Triple &Triple = getToolChain().getTriple();
@@ -8856,6 +8909,10 @@ void ClangAs::ConstructJob(Compilation &C, const JobAction &JA,
   case llvm::Triple::loongarch32:
   case llvm::Triple::loongarch64:
     AddLoongArchTargetArgs(Args, CmdArgs);
+    break;
+
+  case llvm::Triple::postrisc:
+    AddPostriscTargetArgs(Args, CmdArgs);
     break;
 
   case llvm::Triple::riscv32:

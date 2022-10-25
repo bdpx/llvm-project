@@ -11,6 +11,7 @@
 #include "Arch/CSKY.h"
 #include "Arch/LoongArch.h"
 #include "Arch/Mips.h"
+#include "Arch/Postrisc.h"
 #include "Arch/PPC.h"
 #include "Arch/RISCV.h"
 #include "Arch/Sparc.h"
@@ -858,6 +859,17 @@ void tools::gnutools::Assembler::ConstructJob(Compilation &C,
   }
   case llvm::Triple::ve:
     DefaultAssembler = "nas";
+    break;
+
+  case llvm::Triple::postrisc: {
+    CmdArgs.push_back("-64");
+    std::string CPU = getCPUName(D, Args, getToolChain().getTriple());
+    CmdArgs.push_back(
+        postrisc::getPostriscAsmModeForCPU(CPU, getToolChain().getTriple()));
+    AddAssemblerKPIC(getToolChain(), Args, CmdArgs);
+    break;
+  }
+
   }
 
   for (const Arg *A : Args.filtered(options::OPT_ffile_prefix_map_EQ,
@@ -2468,6 +2480,9 @@ void Generic_GCC::GCCInstallationDetector::AddDefaultGCCPrefixes(
       "s390x-unknown-linux-gnu", "s390x-ibm-linux-gnu", "s390x-suse-linux",
       "s390x-redhat-linux"};
 
+  static const char *const POSTRISCLibDirs[] = {"/lib64", "/lib"};
+  static const char *const POSTRISCTriples[] = {"postrisc-linux-gnu",
+                                               "postrisc-linux-gnu"};
   using std::begin;
   using std::end;
 
@@ -2779,6 +2794,10 @@ void Generic_GCC::GCCInstallationDetector::AddDefaultGCCPrefixes(
   case llvm::Triple::systemz:
     LibDirs.append(begin(SystemZLibDirs), end(SystemZLibDirs));
     TripleAliases.append(begin(SystemZTriples), end(SystemZTriples));
+    break;
+  case llvm::Triple::postrisc:
+    LibDirs.append(begin(POSTRISCLibDirs), end(POSTRISCLibDirs));
+    TripleAliases.append(begin(POSTRISCTriples), end(POSTRISCTriples));
     break;
   default:
     // By default, just rely on the standard lib directories and the original

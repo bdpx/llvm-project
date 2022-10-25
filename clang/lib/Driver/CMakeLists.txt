@@ -35,6 +35,7 @@ add_clang_library(clangDriver
   ToolChains/Arch/LoongArch.cpp
   ToolChains/Arch/M68k.cpp
   ToolChains/Arch/Mips.cpp
+  ToolChains/Arch/Postrisc.cpp
   ToolChains/Arch/PPC.cpp
   ToolChains/Arch/RISCV.cpp
   ToolChains/Arch/Sparc.cpp
@@ -105,3 +106,10 @@ add_clang_library(clangDriver
   clangOptions
   ${system_libs}
   )
+
+
+# Postrisc need to know build bin dir path
+target_compile_definitions(obj.clangDriver PRIVATE
+  __LLVM_BUILD_DIR__="${CMAKE_BINARY_DIR}"
+)
+message(STATUS "CMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}")

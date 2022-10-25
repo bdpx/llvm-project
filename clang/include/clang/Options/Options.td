@@ -226,6 +226,8 @@ def m_m68k_Features_Group: OptionGroup<"<m68k features group>">,
                            Group<m_Group>, DocName<"M68k">;
 def m_mips_Features_Group : OptionGroup<"<mips features group>">,
                             Group<m_Group>, DocName<"MIPS">;
+def m_postrisc_Features_Group : OptionGroup<"Postrisc features group>">,
+                                Group<m_Group>, DocName<"Postrisc">;
 def m_ppc_Features_Group : OptionGroup<"<ppc features group>">,
                            Group<m_Group>, DocName<"PowerPC">;
 def m_wasm_Features_Group : OptionGroup<"<wasm features group>">,
@@ -6821,6 +6823,16 @@ foreach i = {0-6} in
 foreach i = {0-7} in
   def ffixed_d#i : Flag<["-"], "ffixed-d"#i>, Group<m_m68k_Features_Group>,
     HelpText<"Reserve the d"#i#" register (M68k only)">;
+} // let Flags = [TargetSpecific]
+
+// Postrisc features flags
+let Flags = [TargetSpecific] in {
+def mvvm    : Flag<["-"], "mvvm">, Group<m_postrisc_Features_Group>;
+def mpred   : Flag<["-"], "mpred">, Group<m_postrisc_Features_Group>;
+def mpred2  : Flag<["-"], "mpred2">, Group<m_postrisc_Features_Group>;
+def mtiny   : Flag<["-"], "mtiny">, Group<m_postrisc_Features_Group>;
+def msmall  : Flag<["-"], "msmall">, Group<m_postrisc_Features_Group>;
+def mlarge  : Flag<["-"], "mlarge">, Group<m_postrisc_Features_Group>;
 } // let Flags = [TargetSpecific]
 
 // X86 feature flags
