@@ -208,6 +208,33 @@ static std::string computeMipsDataLayout(const Triple &TT, StringRef ABIName) {
   return Ret;
 }
 
+static std::string computePostriscDataLayout(const Triple &T) {
+  // https://llvm.org/docs/LangRef.html, Data Layout
+
+  std::string Ret =
+     "e"             // little-endian
+     "-m:e"          // mangling is ELF
+     "-S128"         // stack alignment 128-bit
+     "-p:64:64:64"   // 64-bit pointers with 64-bit alignment
+     "-i1:8:8"       // i1 is 8-bit (byte) aligned
+     "-i8:8:8"       // i8 is 8-bit (byte) aligned as mandated
+     "-i16:16:16"    // i16 is 16-bit aligned
+     "-i32:32:32"    // i32 is 32-bit aligned
+     "-i64:64:64"    // i64 is 64-bit aligned
+     "-i128:128:128" // i128 is 128-bit aligned
+     "-n64"          // native integers are 64-bit
+     "-f16:16:16"    // half is 16-bit aligned
+     "-f32:32:32"    // float is 32-bit aligned
+     "-f64:64:64"    // double is 64-bit aligned
+     "-f128:128:128" // quad is 128-bit aligned
+     "-v128:128:128" // 128-bit vector is 128-bit aligned
+     "-a:0:64"       // aggregates are 64-bit aligned
+     // "-n32"
+  ;
+
+  return Ret;
+}
+
 static std::string computePowerDataLayout(const Triple &T, StringRef ABIName) {
   bool is64Bit = T.isPPC64();
   std::string Ret;
@@ -584,6 +611,8 @@ std::string Triple::computeDataLayout(StringRef ABIName) const {
     return computeMipsDataLayout(*this, ABIName);
   case Triple::msp430:
     return "e-m:e-p:16:16-i32:16-i64:16-f32:16-f64:16-a:8-n8:16-S16";
+  case Triple::postrisc:
+    return computePostriscDataLayout(*this);
   case Triple::ppc:
   case Triple::ppcle:
   case Triple::ppc64:
