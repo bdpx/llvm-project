@@ -14,6 +14,7 @@ add_llvm_component_library(LLVMTargetParser
   IntelGPUTargetParser.cpp
   LoongArchTargetParser.cpp
   NVPTXTargetParser.cpp
+  PostriscTargetParser.cpp
   PPCTargetParser.cpp
   RISCVISAInfo.cpp
   RISCVTargetParser.cpp
