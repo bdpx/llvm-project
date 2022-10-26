@@ -1353,6 +1353,8 @@ StringRef ELFObjectFile<ELFT>::getFileFormatName() const {
       return "elf64-ve";
     case ELF::EM_LOONGARCH:
       return "elf64-loongarch";
+    case ELF::EM_POSTRISC:
+      return "elf64-postrisc";
     default:
       return "elf64-unknown";
     }
@@ -1456,6 +1458,9 @@ template <class ELFT> Triple::ArchType ELFObjectFile<ELFT>::getArch() const {
 
   case ELF::EM_XTENSA:
     return Triple::xtensa;
+
+  case ELF::EM_POSTRISC:
+    return Triple::postrisc;
 
   default:
     return Triple::UnknownArch;
