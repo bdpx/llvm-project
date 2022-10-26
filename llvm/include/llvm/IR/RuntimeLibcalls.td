@@ -106,6 +106,7 @@ def IsOSWindowsOrUEFI : LibcallPredicate<[{TT.isOSWindowsOrUEFI()}]>;
 
 def IsMIPS : LibcallPredicate<[{TT.isMIPS()}]>;
 def IsLoongArch : LibcallPredicate<[{TT.isLoongArch()}]>;
+def IsPostrisc : LibcallPredicate<[{TT.isPostrisc()}]>;
 def IsVE : LibcallPredicate<[{TT.isVE()}]>;
 def IsBPF : LibcallPredicate<[{TT.isBPF()}]>;
 def IsArchCSKY : LibcallPredicate<[{TT.getArch() == Triple::csky}]>;
@@ -3880,6 +3881,7 @@ def WasmSystemLibrary
 // TODO: Should make every target explicit.
 def isDefaultLibcallArch : RuntimeLibcallAvailability<
   (any_of IsMIPS, IsLoongArch, IsVE, IsBPF, IsArchCSKY, IsArchArc, IsArchM68k,
+          IsPostrisc,
           IsArchXtensa, (all_of IsSystemZ, (not IsOSzOS)))>;
 
 
