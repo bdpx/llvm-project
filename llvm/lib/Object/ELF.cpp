@@ -190,6 +190,13 @@ StringRef llvm::object::getELFRelocationTypeName(uint32_t Machine,
       break;
     }
     break;
+  case ELF::EM_POSTRISC:
+    switch (Type) {
+#include "llvm/BinaryFormat/ELFRelocs/Postrisc.def"
+    default:
+      break;
+    }
+    break;
   default:
     break;
   }
@@ -257,6 +264,8 @@ uint32_t llvm::object::getELFRelativeRelocationType(uint32_t Machine) {
     return ELF::R_LARCH_RELATIVE;
   case ELF::EM_NANOMIPS:
     return ELF::R_NANOMIPS_RELATIVE;
+  case ELF::EM_POSTRISC:
+    return ELF::R_POSTRISC_RELATIVE;
   default:
     break;
   }
