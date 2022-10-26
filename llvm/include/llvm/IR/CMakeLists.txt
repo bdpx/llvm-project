@@ -17,6 +17,7 @@ llvm_tablegen(IntrinsicsHexagon.h -gen-intrinsic-enums -intrinsic-prefix=hexagon
 llvm_tablegen(IntrinsicsLoongArch.h -gen-intrinsic-enums -intrinsic-prefix=loongarch)
 llvm_tablegen(IntrinsicsMips.h -gen-intrinsic-enums -intrinsic-prefix=mips)
 llvm_tablegen(IntrinsicsNVPTX.h -gen-intrinsic-enums -intrinsic-prefix=nvvm)
+llvm_tablegen(IntrinsicsPostrisc.h -gen-intrinsic-enums -intrinsic-prefix=postrisc)
 llvm_tablegen(IntrinsicsPowerPC.h -gen-intrinsic-enums -intrinsic-prefix=ppc)
 llvm_tablegen(IntrinsicsR600.h -gen-intrinsic-enums -intrinsic-prefix=r600)
 llvm_tablegen(IntrinsicsRISCV.h -gen-intrinsic-enums -intrinsic-prefix=riscv)
