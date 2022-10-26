@@ -30,6 +30,7 @@
 #include "Targets/NVPTX.h"
 #include "Targets/OSTargets.h"
 #include "Targets/PPC.h"
+#include "Targets/Postrisc.h"
 #include "Targets/RISCV.h"
 #include "Targets/SPIR.h"
 #include "Targets/Sparc.h"
@@ -797,6 +798,14 @@ std::unique_ptr<TargetInfo> AllocateTarget(const llvm::Triple &Triple,
 
   case llvm::Triple::xtensa:
     return std::make_unique<XtensaTargetInfo>(Triple, Opts);
+
+  case llvm::Triple::postrisc:
+    switch (os) {
+    case llvm::Triple::Linux:
+      return std::make_unique<LinuxTargetInfo<PostriscV1TargetInfo>>(Triple, Opts);
+    default:
+      return std::make_unique<PostriscV1TargetInfo>(Triple, Opts);
+    }
   }
 }
 } // namespace targets
