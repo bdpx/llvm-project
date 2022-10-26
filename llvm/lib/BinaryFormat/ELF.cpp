@@ -65,6 +65,8 @@ uint16_t ELF::convertTripleArchTypeToEMachine(Triple::ArchType ArchType) {
     return EM_MIPS;
   case Triple::msp430:
     return EM_MSP430;
+  case Triple::postrisc:
+    return EM_POSTRISC;
   case Triple::ppc:
   case Triple::ppcle:
     return EM_PPC;

@@ -199,5 +199,9 @@ ELF_MACHINE(EM_COOL,          217, "cool", "EM_COOL") // iCelero CoolEngine
 ELF_MACHINE(EM_NORC,          218, "norc", "EM_NORC") // Nanoradio Optimized RISC
 ELF_MACHINE(EM_CSR_KALIMBA,   219, "csr_kalimba", "EM_CSR_KALIMBA") // CSR Kalimba architecture family
 ELF_MACHINE(EM_CSKY,          252, "csky", "EM_CSKY") // C-SKY 32-bit processor
+
+// unofficial EM_* values pick large random 2-byte numbers
+ELF_MACHINE(EM_POSTRISC,      0x1973, "postrisc", "EM_POSTRISC")  // Postrisc 64-bit virtual processor
+
 #undef ELF_MACHINE
 #endif
