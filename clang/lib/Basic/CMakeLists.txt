@@ -7,6 +7,8 @@ set(LLVM_LINK_COMPONENTS
 find_first_existing_vc_file("${LLVM_MAIN_SRC_DIR}" llvm_vc)
 find_first_existing_vc_file("${CLANG_SOURCE_DIR}" clang_vc)
 
+include_directories(${LLVM_BINARY_DIR}/lib/Target/Postrisc)
+
 # The VC revision include that we want to generate.
 set(version_inc "${CMAKE_CURRENT_BINARY_DIR}/VCSVersion.inc")
 
@@ -111,6 +113,7 @@ add_clang_library(clangBasic
   Targets/Mips.cpp
   Targets/NVPTX.cpp
   Targets/OSTargets.cpp
+  Targets/Postrisc.cpp
   Targets/PPC.cpp
   Targets/RISCV.cpp
   Targets/SPIR.cpp
