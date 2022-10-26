@@ -176,6 +176,7 @@ class SemaObjC;
 class SemaOpenACC;
 class SemaOpenCL;
 class SemaOpenMP;
+class SemaPostrisc;
 class SemaPPC;
 class SemaPseudoObject;
 class SemaRISCV;
@@ -1498,6 +1499,11 @@ public:
     return *M68kPtr;
   }
 
+  SemaPostrisc &Postrisc() {
+    assert(PostriscPtr);
+    return *PostriscPtr;
+  }
+
   SemaMIPS &MIPS() {
     assert(MIPSPtr);
     return *MIPSPtr;
@@ -1628,6 +1634,7 @@ private:
   std::unique_ptr<SemaOpenACC> OpenACCPtr;
   std::unique_ptr<SemaOpenCL> OpenCLPtr;
   std::unique_ptr<SemaOpenMP> OpenMPPtr;
+  std::unique_ptr<SemaPostrisc> PostriscPtr;
   std::unique_ptr<SemaPPC> PPCPtr;
   std::unique_ptr<SemaPseudoObject> PseudoObjectPtr;
   std::unique_ptr<SemaRISCV> RISCVPtr;
