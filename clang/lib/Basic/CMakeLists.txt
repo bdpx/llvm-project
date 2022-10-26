@@ -110,6 +110,7 @@ add_clang_library(clangBasic
   Targets/NVPTX.cpp
   Targets/OSTargets.cpp
   Targets/PNaCl.cpp
+  Targets/Postrisc.cpp
   Targets/PPC.cpp
   Targets/RISCV.cpp
   Targets/SPIR.cpp
