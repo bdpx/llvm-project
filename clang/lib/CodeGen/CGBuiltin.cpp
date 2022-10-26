@@ -3121,6 +3121,7 @@ RValue CodeGenFunction::EmitBuiltinExpr(const GlobalDecl GD, unsigned BuiltinID,
     case Builtin::BInearbyintl:
     case Builtin::BI__builtin_nearbyint:
     case Builtin::BI__builtin_nearbyintf:
+    case Builtin::BI__builtin_nearbyintf16:
     case Builtin::BI__builtin_nearbyintl:
     case Builtin::BI__builtin_nearbyintf128:
     case Builtin::BI__builtin_elementwise_nearbyint:
@@ -3283,6 +3284,7 @@ RValue CodeGenFunction::EmitBuiltinExpr(const GlobalDecl GD, unsigned BuiltinID,
     case Builtin::BIlroundl:
     case Builtin::BI__builtin_lround:
     case Builtin::BI__builtin_lroundf:
+    case Builtin::BI__builtin_lroundf16:
     case Builtin::BI__builtin_lroundl:
     case Builtin::BI__builtin_lroundf128:
       return RValue::get(emitMaybeConstrainedFPToIntRoundBuiltin(
@@ -3294,6 +3296,7 @@ RValue CodeGenFunction::EmitBuiltinExpr(const GlobalDecl GD, unsigned BuiltinID,
     case Builtin::BIllroundl:
     case Builtin::BI__builtin_llround:
     case Builtin::BI__builtin_llroundf:
+    case Builtin::BI__builtin_llroundf16:
     case Builtin::BI__builtin_llroundl:
     case Builtin::BI__builtin_llroundf128:
       return RValue::get(emitMaybeConstrainedFPToIntRoundBuiltin(
@@ -3305,6 +3308,7 @@ RValue CodeGenFunction::EmitBuiltinExpr(const GlobalDecl GD, unsigned BuiltinID,
     case Builtin::BIlrintl:
     case Builtin::BI__builtin_lrint:
     case Builtin::BI__builtin_lrintf:
+    case Builtin::BI__builtin_lrintf16:
     case Builtin::BI__builtin_lrintl:
     case Builtin::BI__builtin_lrintf128:
       return RValue::get(emitMaybeConstrainedFPToIntRoundBuiltin(
@@ -3316,6 +3320,7 @@ RValue CodeGenFunction::EmitBuiltinExpr(const GlobalDecl GD, unsigned BuiltinID,
     case Builtin::BIllrintl:
     case Builtin::BI__builtin_llrint:
     case Builtin::BI__builtin_llrintf:
+    case Builtin::BI__builtin_llrintf16:
     case Builtin::BI__builtin_llrintl:
     case Builtin::BI__builtin_llrintf128:
       return RValue::get(emitMaybeConstrainedFPToIntRoundBuiltin(
@@ -5805,6 +5810,7 @@ RValue CodeGenFunction::EmitBuiltinExpr(const GlobalDecl GD, unsigned BuiltinID,
 
   case Builtin::BI__builtin_signbit:
   case Builtin::BI__builtin_signbitf:
+  case Builtin::BI__builtin_signbitf16:
   case Builtin::BI__builtin_signbitl: {
     return RValue::get(
         Builder.CreateZExt(EmitSignBit(*this, EmitScalarExpr(E->getArg(0))),
