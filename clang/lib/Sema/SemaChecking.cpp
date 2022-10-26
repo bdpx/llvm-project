@@ -73,6 +73,7 @@
 #include "clang/Sema/SemaNVPTX.h"
 #include "clang/Sema/SemaObjC.h"
 #include "clang/Sema/SemaOpenCL.h"
+#include "clang/Sema/SemaPostrisc.h"
 #include "clang/Sema/SemaPPC.h"
 #include "clang/Sema/SemaRISCV.h"
 #include "clang/Sema/SemaSPIRV.h"
@@ -2172,6 +2173,8 @@ bool Sema::CheckTSBuiltinFunctionCall(const TargetInfo &TI, unsigned BuiltinID,
   case llvm::Triple::loongarch64:
     return LoongArch().CheckLoongArchBuiltinFunctionCall(TI, BuiltinID,
                                                          TheCall);
+  case llvm::Triple::postrisc:
+    return Postrisc().CheckPostriscBuiltinFunctionCall(TI, BuiltinID, TheCall);
   case llvm::Triple::wasm32:
   case llvm::Triple::wasm64:
     return Wasm().CheckWebAssemblyBuiltinFunctionCall(TI, BuiltinID, TheCall);
@@ -3038,6 +3041,7 @@ Sema::CheckBuiltinFunctionCall(FunctionDecl *FDecl, unsigned BuiltinID,
   case Builtin::BI__builtin_iszero:
   case Builtin::BI__builtin_signbit:
   case Builtin::BI__builtin_signbitf:
+  case Builtin::BI__builtin_signbitf16:
   case Builtin::BI__builtin_signbitl:
     if (BuiltinFPClassification(TheCall, 1, BuiltinID))
       return ExprError();

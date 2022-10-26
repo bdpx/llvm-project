@@ -4541,6 +4541,7 @@ bool InterpretBuiltin(InterpState &S, CodePtr OpPC, const CallExpr *Call,
 
   case Builtin::BI__builtin_signbit:
   case Builtin::BI__builtin_signbitf:
+  case Builtin::BI__builtin_signbitf16:
   case Builtin::BI__builtin_signbitl:
     return interp__builtin_signbit(S, OpPC, Frame, Call);
 

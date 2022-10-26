@@ -16757,6 +16757,7 @@ bool IntExprEvaluator::VisitBuiltinCallExpr(const CallExpr *E,
 
   case Builtin::BI__builtin_signbit:
   case Builtin::BI__builtin_signbitf:
+  case Builtin::BI__builtin_signbitf16:
   case Builtin::BI__builtin_signbitl: {
     APFloat Val(0.0);
     return EvaluateFloat(E->getArg(0), Val, Info) &&
