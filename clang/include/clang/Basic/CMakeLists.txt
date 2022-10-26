@@ -110,6 +110,10 @@ clang_tablegen(BuiltinsNVPTX.inc -gen-clang-builtins
   SOURCE BuiltinsNVPTX.td
   TARGET ClangBuiltinsNVPTX)
 
+clang_tablegen(BuiltinsPostrisc.inc -gen-clang-builtins
+  SOURCE BuiltinsPostrisc.td
+  TARGET ClangBuiltinsPostrisc)
+
 clang_tablegen(BuiltinsRISCV.inc -gen-clang-builtins
   SOURCE BuiltinsRISCV.td
   TARGET ClangBuiltinsRISCV)
