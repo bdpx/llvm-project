@@ -913,6 +913,19 @@ enum {
 #include "ELFRelocs/Xtensa.def"
 };
 
+// Postrisc Specific e_flags
+enum {
+  EF_POSTRISC_NOREORDER = 0x00000001, // Don't reorder instructions
+  EF_POSTRISC_PIC       = 0x00000002, // Position independent code
+  EF_POSTRISC_ARCH_32   = 0x50000000, // POSTRISC-32 instruction set per linux not elf.h
+  EF_POSTRISC_ARCH      = 0xf0000000, // Mask for applying EF_POSTRISC_ARCH_ variant
+};
+
+// ELF Relocation types for Postrisc
+enum {
+#include "ELFRelocs/Postrisc.def"
+};
+
 #undef ELF_RELOC
 
 // Section header.
