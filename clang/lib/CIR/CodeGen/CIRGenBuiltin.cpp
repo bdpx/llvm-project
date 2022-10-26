@@ -652,6 +652,7 @@ static RValue tryEmitFPMathIntrinsic(CIRGenFunction &cgf, const CallExpr *e,
   case Builtin::BInearbyintl:
   case Builtin::BI__builtin_nearbyint:
   case Builtin::BI__builtin_nearbyintf:
+  case Builtin::BI__builtin_nearbyintf16:
   case Builtin::BI__builtin_nearbyintl:
   case Builtin::BI__builtin_nearbyintf128:
   case Builtin::BI__builtin_elementwise_nearbyint:
@@ -1859,6 +1860,7 @@ RValue CIRGenFunction::emitBuiltinExpr(const GlobalDecl &gd, unsigned builtinID,
   case Builtin::BI__scoped_atomic_thread_fence:
   case Builtin::BI__builtin_signbit:
   case Builtin::BI__builtin_signbitf:
+  case Builtin::BI__builtin_signbitf16:
   case Builtin::BI__builtin_signbitl:
   case Builtin::BI__warn_memset_zero_len:
   case Builtin::BI__annotation:

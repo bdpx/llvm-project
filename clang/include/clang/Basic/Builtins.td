@@ -411,6 +411,12 @@ def LroundF128 : Builtin {
   let Prototype = "long int(__float128)";
 }
 
+def NearbyintF16 : Builtin {
+  let Spellings = ["__builtin_nearbyintf16"];
+  let Attributes = [FunctionWithBuiltinPrefix, NoThrow, Const];
+  let Prototype = "_Float16(_Float16)";
+}
+
 def NearbyintF128 : Builtin {
   let Spellings = ["__builtin_nearbyintf128"];
   let Attributes = [FunctionWithBuiltinPrefix, NoThrow, Const];
@@ -673,6 +679,13 @@ def SignbitF : Builtin {
   let Attributes = [FunctionWithBuiltinPrefix, NoThrow, Const,
                     Constexpr];
   let Prototype = "int(float)";
+}
+
+def SignbitF16 : Builtin {
+  let Spellings = ["__builtin_signbitf16"];
+  let Attributes = [FunctionWithBuiltinPrefix, NoThrow, Const,
+                    Constexpr];
+  let Prototype = "int(_Float16)";
 }
 
 def SignbitL : Builtin {
