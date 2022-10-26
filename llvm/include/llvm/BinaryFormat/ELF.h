@@ -325,6 +325,13 @@ enum {
   EM_VE = 251,            // NEC SX-Aurora VE
   EM_CSKY = 252,          // C-SKY 32-bit processor
   EM_LOONGARCH = 258,     // LoongArch
+  EM_KF32 = 259,          // ChipON KungFu32
+  EM_U16_U8CORE = 260,    // LAPIS nX-U16/U8
+  EM_TACHYUM = 261,       // Tachyum
+  EM_56800EF = 262,       // NXP 56800EF Digital Signal Controller (DSC)
+
+  // unofficial EM_* values pick large random 2-byte numbers
+  EM_POSTRISC = 0x1973,   // Postrisc 64-bit virtual processor
 };
 
 // Object file classes.
@@ -1093,6 +1100,19 @@ enum : unsigned {
 // ELF Relocation types for Xtensa
 enum {
 #include "ELFRelocs/Xtensa.def"
+};
+
+// Postrisc Specific e_flags
+enum {
+  EF_POSTRISC_NOREORDER = 0x00000001, // Don't reorder instructions
+  EF_POSTRISC_PIC       = 0x00000002, // Position independent code
+  EF_POSTRISC_ARCH_32   = 0x50000000, // POSTRISC-32 instruction set per linux not elf.h
+  EF_POSTRISC_ARCH      = 0xf0000000, // Mask for applying EF_POSTRISC_ARCH_ variant
+};
+
+// ELF Relocation types for Postrisc
+enum {
+#include "ELFRelocs/Postrisc.def"
 };
 
 #undef ELF_RELOC
