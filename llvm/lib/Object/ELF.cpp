@@ -183,6 +183,13 @@ StringRef llvm::object::getELFRelocationTypeName(uint32_t Machine,
       break;
     }
     break;
+  case ELF::EM_POSTRISC:
+    switch (Type) {
+#include "llvm/BinaryFormat/ELFRelocs/Postrisc.def"
+    default:
+      break;
+    }
+    break;
   default:
     break;
   }
