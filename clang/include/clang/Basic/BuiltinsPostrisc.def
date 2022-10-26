@@ -1,0 +1,626 @@
+//==- BuiltinsPostrisc.def - AArch64 Builtin function database ---*- C++ -*-==//
+//
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//
+//===----------------------------------------------------------------------===//
+//
+// This file defines the Postrisc-specific builtin function database. Users of
+// this file must define the BUILTIN macro to make use of this information.
+//
+//===----------------------------------------------------------------------===//
+
+// The format of this database matches clang/Basic/Builtins.def.
+
+#if defined(BUILTIN) && !defined(TARGET_BUILTIN)
+#   define TARGET_BUILTIN(ID, TYPE, ATTRS, FEATURE) BUILTIN(ID, TYPE, ATTRS)
+#endif
+
+#if defined(BUILTIN) && !defined(LANGBUILTIN)
+#   define LANGBUILTIN(ID, TYPE, ATTRS, BUILTIN_LANG) BUILTIN(ID, TYPE, ATTRS)
+#endif
+
+#if defined(BUILTIN) && !defined(TARGET_HEADER_BUILTIN)
+#  define TARGET_HEADER_BUILTIN(ID, TYPE, ATTRS, HEADER, LANG, FEATURE) BUILTIN(ID, TYPE, ATTRS)
+#endif
+
+// FIXME: from Builtins.def
+// The first value provided to the macro specifies the function name of the
+// builtin, and results in a clang::builtin::BIXX enum value for XX.
+
+// The second value provided to the macro specifies the type of the function
+// (result value, then each argument) as follows:
+//  v -> void
+//  b -> boolean
+//  c -> char
+//  s -> short
+//  i -> int
+//  h -> half (__fp16, OpenCL)
+//  x -> half (_Float16)
+//  y -> half (__bf16)
+//  f -> float
+//  d -> double
+//  z -> size_t
+//  w -> wchar_t
+//  F -> constant CFString
+//  G -> id
+//  H -> SEL
+//  M -> struct objc_super
+//  a -> __builtin_va_list
+//  A -> "reference" to __builtin_va_list
+//  V -> Vector, followed by the number of elements and the base type.
+//  q -> Scalable vector, followed by the number of elements and the base type.
+//  E -> ext_vector, followed by the number of elements and the base type.
+//  X -> _Complex, followed by the base type.
+//  Y -> ptrdiff_t
+//  P -> FILE
+//  J -> jmp_buf
+//  SJ -> sigjmp_buf
+//  K -> ucontext_t
+//  p -> pid_t
+//  . -> "...".  This may only occur at the end of the function list.
+//
+// Types may be prefixed with the following modifiers:
+//  L   -> long (e.g. Li for 'long int', Ld for 'long double')
+//  LL  -> long long (e.g. LLi for 'long long int', LLd for __float128)
+//  LLL -> __int128_t (e.g. LLLi)
+//  Z   -> int32_t (require a native 32-bit integer type on the target)
+//  W   -> int64_t (require a native 64-bit integer type on the target)
+//  N   -> 'int' size if target is LP64, 'L' otherwise.
+//  O   -> long for OpenCL targets, long long otherwise.
+//  S   -> signed
+//  U   -> unsigned
+//  I   -> Required to constant fold to an integer constant expression.
+//
+// Types may be postfixed with the following modifiers:
+// * -> pointer (optionally followed by an address space number, if no address
+//               space is specified than any address space will be accepted)
+// & -> reference (optionally followed by an address space number)
+// C -> const
+// D -> volatile
+// R -> restrict
+
+// The third value provided to the macro specifies information about attributes
+// of the function.  These must be kept in sync with the predicates in the
+// Builtin::Context class.  Currently we have:
+//  n -> nothrow
+//  r -> noreturn
+//  U -> pure
+//  c -> const
+//  t -> signature is meaningless, use custom typechecking
+//  T -> type is not important to semantic analysis and codegen; recognize as
+//       builtin even if type doesn't match signature, and don't warn if we
+//       can't be sure the type is right
+//  F -> this is a libc/libm function with a '__builtin_' prefix added.
+//  f -> this is a libc/libm function without a '__builtin_' prefix, or with
+//       'z', a C++ standard library function in namespace std::. This builtin
+//       is disableable by '-fno-builtin-foo' / '-fno-builtin-std-foo'.
+//  h -> this function requires a specific header or an explicit declaration.
+//  i -> this is a runtime library implemented function without the
+//       '__builtin_' prefix. It will be implemented in compiler-rt or libgcc.
+//  p:N: -> this is a printf-like function whose Nth argument is the format
+//          string.
+//  P:N: -> similar to the p:N: attribute, but the function is like vprintf
+//          in that it accepts its arguments as a va_list rather than
+//          through an ellipsis
+//  s:N: -> this is a scanf-like function whose Nth argument is the format
+//          string.
+//  S:N: -> similar to the s:N: attribute, but the function is like vscanf
+//          in that it accepts its arguments as a va_list rather than
+//          through an ellipsis
+//  e -> const, but only when -fno-math-errno and FP exceptions are ignored
+//  g -> const when FP exceptions are ignored
+//  j -> returns_twice (like setjmp)
+//  u -> arguments are not evaluated for their side-effects
+//  V:N: -> requires vectors of at least N bits to be legal
+//  C<N,M_0,...,M_k> -> callback behavior: argument N is called with argument
+//                      M_0, ..., M_k as payload
+//  z -> this is a function in (possibly-versioned) namespace std
+//  E -> this function can be constant evaluated by Clang frontend
+//  FIXME: gcc has nonnull
+
+BUILTIN(__builtin_postrisc_cpuid,   "ULLiULLi",  "n")
+BUILTIN(__builtin_postrisc_int,     "vULLi",     "n")
+BUILTIN(__builtin_postrisc_syscall, "v",         "n")
+BUILTIN(__builtin_postrisc_sysret,  "v",         "n")
+BUILTIN(__builtin_postrisc_rfi,     "v",         "n")
+BUILTIN(__builtin_postrisc_halt,    "v",         "n")
+BUILTIN(__builtin_postrisc_undef,   "v",         "n")
+BUILTIN(__builtin_postrisc_nop,     "vULLIi",    "n")
+BUILTIN(__builtin_postrisc_nop_l,   "vULLIi",    "n")
+BUILTIN(__builtin_postrisc_tpa,     "ULLiv*",    "n")
+
+BUILTIN(__builtin_postrisc_stack_pointer, "ULLi",  "n")
+
+TARGET_BUILTIN(__builtin_postrisc_tlb_purge, "vv*v*Ui", "n", "ptc")
+
+// crc32new = crc32c(crc32old, uint128data, sizetlen)
+BUILTIN(__builtin_postrisc_crc32c,  "UiUiULLLiULLi",  "n")
+
+// AES
+TARGET_BUILTIN(__builtin_postrisc_aesenc,           "V2OiV2OiV2Oi", "ncV:128:", "aes")
+TARGET_BUILTIN(__builtin_postrisc_aesenclast,       "V2OiV2OiV2Oi", "ncV:128:", "aes")
+TARGET_BUILTIN(__builtin_postrisc_aesdec,           "V2OiV2OiV2Oi", "ncV:128:", "aes")
+TARGET_BUILTIN(__builtin_postrisc_aesdeclast,       "V2OiV2OiV2Oi", "ncV:128:", "aes")
+TARGET_BUILTIN(__builtin_postrisc_aesimc,           "V2OiV2Oi",     "ncV:128:", "aes")
+TARGET_BUILTIN(__builtin_postrisc_aeskeygenassist,  "V2OiV2OiUIc",  "ncV:128:", "aes")
+
+// debug/monitor registers
+BUILTIN(__builtin_postrisc_get_mr,     "ULLiULLi",  "n")
+BUILTIN(__builtin_postrisc_set_mr,    "vULLiULLi",  "n")
+BUILTIN(__builtin_postrisc_get_ibr,    "ULLiULLi",  "n")
+BUILTIN(__builtin_postrisc_set_ibr,   "vULLiULLi",  "n")
+BUILTIN(__builtin_postrisc_get_dbr,    "ULLiULLi",  "n")
+BUILTIN(__builtin_postrisc_set_dbr,   "vULLiULLi",  "n")
+
+#define BUILTIN_TYPE_UD  "ULLi"
+#define BUILTIN_TYPE_UQ  "ULLLi"
+
+#define POSTRISC_SPECIAL_REG_BUILTINS(name, type)                \
+   BUILTIN(__builtin_postrisc_get_ ## name, BUILTIN_TYPE_ ## type,  "n")        \
+   BUILTIN(__builtin_postrisc_set_ ## name, "v" BUILTIN_TYPE_ ## type, "n")     \
+
+POSTRISC_SPECIAL_REG_BUILTINS(ip,    UD)
+POSTRISC_SPECIAL_REG_BUILTINS(eip,   UD)
+POSTRISC_SPECIAL_REG_BUILTINS(fpcr,  UD)
+POSTRISC_SPECIAL_REG_BUILTINS(eca,   UD)
+POSTRISC_SPECIAL_REG_BUILTINS(rsc,   UD)
+POSTRISC_SPECIAL_REG_BUILTINS(rsp,   UD)
+POSTRISC_SPECIAL_REG_BUILTINS(bsp,   UD)
+POSTRISC_SPECIAL_REG_BUILTINS(psr,   UD)
+POSTRISC_SPECIAL_REG_BUILTINS(reip,  UD)
+POSTRISC_SPECIAL_REG_BUILTINS(kip,   UD)
+POSTRISC_SPECIAL_REG_BUILTINS(ksp,   UD)
+POSTRISC_SPECIAL_REG_BUILTINS(krsp,  UD)
+POSTRISC_SPECIAL_REG_BUILTINS(peb,   UD)
+POSTRISC_SPECIAL_REG_BUILTINS(teb,   UD)
+POSTRISC_SPECIAL_REG_BUILTINS(itc,   UD)
+POSTRISC_SPECIAL_REG_BUILTINS(itm,   UD)
+POSTRISC_SPECIAL_REG_BUILTINS(pta,   UD)
+POSTRISC_SPECIAL_REG_BUILTINS(iva,   UD)
+POSTRISC_SPECIAL_REG_BUILTINS(iip,   UD)
+POSTRISC_SPECIAL_REG_BUILTINS(iipa,  UD)
+POSTRISC_SPECIAL_REG_BUILTINS(ipsr,  UD)
+POSTRISC_SPECIAL_REG_BUILTINS(cause, UD)
+POSTRISC_SPECIAL_REG_BUILTINS(ifa,   UD)
+POSTRISC_SPECIAL_REG_BUILTINS(iib,   UQ)
+POSTRISC_SPECIAL_REG_BUILTINS(irr0,  UD)
+POSTRISC_SPECIAL_REG_BUILTINS(irr1,  UD)
+POSTRISC_SPECIAL_REG_BUILTINS(irr2,  UD)
+POSTRISC_SPECIAL_REG_BUILTINS(irr3,  UD)
+POSTRISC_SPECIAL_REG_BUILTINS(isr0,  UD)
+POSTRISC_SPECIAL_REG_BUILTINS(isr1,  UD)
+POSTRISC_SPECIAL_REG_BUILTINS(isr2,  UD)
+POSTRISC_SPECIAL_REG_BUILTINS(isr3,  UD)
+POSTRISC_SPECIAL_REG_BUILTINS(iv,    UD)
+POSTRISC_SPECIAL_REG_BUILTINS(lid,   UD)
+POSTRISC_SPECIAL_REG_BUILTINS(tpr,   UD)
+POSTRISC_SPECIAL_REG_BUILTINS(itcv,  UD)
+POSTRISC_SPECIAL_REG_BUILTINS(tsv,   UD)
+POSTRISC_SPECIAL_REG_BUILTINS(pmv,   UD)
+POSTRISC_SPECIAL_REG_BUILTINS(cmcv,  UD)
+
+
+///////////////////////////////////////////////////////////////////////////////////////
+// vector common
+///////////////////////////////////////////////////////////////////////////////////////
+#define BUILTIN_TYPE_FH  "x" // support _Float16 (x), not __fp16 (h)
+#define BUILTIN_TYPE_FS  "f"
+#define BUILTIN_TYPE_FD  "d"
+#define BUILTIN_TYPE_FQ  "Ld"
+#define BUILTIN_TYPE_VFH "V8" BUILTIN_TYPE_FH
+#define BUILTIN_TYPE_VFS "V4" BUILTIN_TYPE_FS
+#define BUILTIN_TYPE_VFD "V2" BUILTIN_TYPE_FD
+#define BUILTIN_TYPE_VIB "V16c"
+#define BUILTIN_TYPE_VIH "V8s"
+#define BUILTIN_TYPE_VIW "V4i"
+#define BUILTIN_TYPE_VID "V2Oi"
+
+#define BUILTIN_TYPE_VUB "V16Uc"
+#define BUILTIN_TYPE_VUH "V8Us"
+#define BUILTIN_TYPE_VUW "V4Ui"
+#define BUILTIN_TYPE_VUD "V2UOi"
+
+#define BUILTIN_POSTRISC_R2(NAME, TA, TB)                                        \
+  TARGET_BUILTIN(__builtin_postrisc_##NAME,                                      \
+      BUILTIN_TYPE_##TA BUILTIN_TYPE_##TB                                        \
+      , "ncV:128:", "vector")
+
+#define BUILTIN_POSTRISC_R3(NAME, TA, TB, TC)                                    \
+  TARGET_BUILTIN(__builtin_postrisc_##NAME,                                      \
+      BUILTIN_TYPE_##TA BUILTIN_TYPE_##TB BUILTIN_TYPE_##TC                      \
+      , "ncV:128:", "vector")
+
+#define BUILTIN_POSTRISC_R4(NAME, TA, TB, TC, TD)                                \
+  TARGET_BUILTIN(__builtin_postrisc_##NAME,                                      \
+      BUILTIN_TYPE_##TA BUILTIN_TYPE_##TB BUILTIN_TYPE_##TC BUILTIN_TYPE_##TD    \
+      , "ncV:128:", "vector")
+
+BUILTIN_POSTRISC_R3(clmulll, VID, VID, VID)
+BUILTIN_POSTRISC_R3(clmulhl, VID, VID, VID)
+BUILTIN_POSTRISC_R3(clmulhh, VID, VID, VID)
+
+///////////////////////////////////////////////////////////////////////////////////////
+// fp scalar half
+///////////////////////////////////////////////////////////////////////////////////////
+
+BUILTIN_POSTRISC_R2(fabssh,    FH, FH)
+BUILTIN_POSTRISC_R2(fnabssh,   FH, FH)
+BUILTIN_POSTRISC_R2(fnegsh,    FH, FH)
+BUILTIN_POSTRISC_R2(frsqrtsh,  FH, FH)
+BUILTIN_POSTRISC_R2(fsqrtsh,   FH, FH)
+
+BUILTIN_POSTRISC_R3(fabsdsh,   FH, FH, FH)
+BUILTIN_POSTRISC_R3(fnabsdsh,  FH, FH, FH)
+BUILTIN_POSTRISC_R3(faddsh,    FH, FH, FH)
+BUILTIN_POSTRISC_R3(fnaddsh,   FH, FH, FH)
+BUILTIN_POSTRISC_R3(faminsh,   FH, FH, FH)
+BUILTIN_POSTRISC_R3(famaxsh,   FH, FH, FH)
+BUILTIN_POSTRISC_R3(fmaxsh,    FH, FH, FH)
+BUILTIN_POSTRISC_R3(fminsh,    FH, FH, FH)
+BUILTIN_POSTRISC_R3(fdivsh,    FH, FH, FH)
+BUILTIN_POSTRISC_R3(fdotsh,    FH, FH, FH)
+BUILTIN_POSTRISC_R3(fmulsh,    FH, FH, FH)
+BUILTIN_POSTRISC_R3(fnmulsh,   FH, FH, FH)
+BUILTIN_POSTRISC_R3(fsubsh,    FH, FH, FH)
+
+BUILTIN_POSTRISC_R4(fmaddsh,   FH, FH, FH, FH)
+BUILTIN_POSTRISC_R4(fnmaddsh,  FH, FH, FH, FH)
+BUILTIN_POSTRISC_R4(fmsubsh,   FH, FH, FH, FH)
+BUILTIN_POSTRISC_R4(fnmsubsh,  FH, FH, FH, FH)
+BUILTIN_POSTRISC_R4(fmergesh,  FH, FH, FH, FH)
+
+///////////////////////////////////////////////////////////////////////////////////////
+// fp scalar single
+///////////////////////////////////////////////////////////////////////////////////////
+
+BUILTIN_POSTRISC_R2(fabsss,    FS, FS)
+BUILTIN_POSTRISC_R2(fnabsss,   FS, FS)
+BUILTIN_POSTRISC_R2(fnegss,    FS, FS)
+BUILTIN_POSTRISC_R2(frsqrtss,  FS, FS)
+BUILTIN_POSTRISC_R2(fsqrtss,   FS, FS)
+
+BUILTIN_POSTRISC_R3(fabsdss,   FS, FS, FS)
+BUILTIN_POSTRISC_R3(fnabsdss,  FS, FS, FS)
+BUILTIN_POSTRISC_R3(faddss,    FS, FS, FS)
+BUILTIN_POSTRISC_R3(fnaddss,   FS, FS, FS)
+BUILTIN_POSTRISC_R3(faminss,   FS, FS, FS)
+BUILTIN_POSTRISC_R3(famaxss,   FS, FS, FS)
+BUILTIN_POSTRISC_R3(fmaxss,    FS, FS, FS)
+BUILTIN_POSTRISC_R3(fminss,    FS, FS, FS)
+BUILTIN_POSTRISC_R3(fdivss,    FS, FS, FS)
+BUILTIN_POSTRISC_R3(fdotss,    FS, FS, FS)
+BUILTIN_POSTRISC_R3(fmulss,    FS, FS, FS)
+BUILTIN_POSTRISC_R3(fnmulss,   FS, FS, FS)
+BUILTIN_POSTRISC_R3(fsubss,    FS, FS, FS)
+
+BUILTIN_POSTRISC_R4(fmaddss,   FS, FS, FS, FS)
+BUILTIN_POSTRISC_R4(fnmaddss,  FS, FS, FS, FS)
+BUILTIN_POSTRISC_R4(fmsubss,   FS, FS, FS, FS)
+BUILTIN_POSTRISC_R4(fnmsubss,  FS, FS, FS, FS)
+BUILTIN_POSTRISC_R4(fmergess,  FS, FS, FS, FS)
+
+///////////////////////////////////////////////////////////////////////////////////////
+// fp scalar double
+///////////////////////////////////////////////////////////////////////////////////////
+
+BUILTIN_POSTRISC_R2(fabssd,    FD, FD)
+BUILTIN_POSTRISC_R2(fnabssd,   FD, FD)
+BUILTIN_POSTRISC_R2(fnegsd,    FD, FD)
+BUILTIN_POSTRISC_R2(frsqrtsd,  FD, FD)
+BUILTIN_POSTRISC_R2(fsqrtsd,   FD, FD)
+
+BUILTIN_POSTRISC_R3(fabsdsd,   FD, FD, FD)
+BUILTIN_POSTRISC_R3(fnabsdsd,  FD, FD, FD)
+BUILTIN_POSTRISC_R3(faddsd,    FD, FD, FD)
+BUILTIN_POSTRISC_R3(fnaddsd,   FD, FD, FD)
+BUILTIN_POSTRISC_R3(faminsd,   FD, FD, FD)
+BUILTIN_POSTRISC_R3(famaxsd,   FD, FD, FD)
+BUILTIN_POSTRISC_R3(fmaxsd,    FD, FD, FD)
+BUILTIN_POSTRISC_R3(fminsd,    FD, FD, FD)
+BUILTIN_POSTRISC_R3(fdivsd,    FD, FD, FD)
+BUILTIN_POSTRISC_R3(fdotsd,    FD, FD, FD)
+BUILTIN_POSTRISC_R3(fmulsd,    FD, FD, FD)
+BUILTIN_POSTRISC_R3(fnmulsd,   FD, FD, FD)
+BUILTIN_POSTRISC_R3(fsubsd,    FD, FD, FD)
+
+BUILTIN_POSTRISC_R4(fmaddsd,   FD, FD, FD, FD)
+BUILTIN_POSTRISC_R4(fnmaddsd,  FD, FD, FD, FD)
+BUILTIN_POSTRISC_R4(fmsubsd,   FD, FD, FD, FD)
+BUILTIN_POSTRISC_R4(fnmsubsd,  FD, FD, FD, FD)
+BUILTIN_POSTRISC_R4(fmergesd,  FD, FD, FD, FD)
+
+///////////////////////////////////////////////////////////////////////////////////////
+// fp scalar quadruple
+///////////////////////////////////////////////////////////////////////////////////////
+
+BUILTIN_POSTRISC_R2(fabssq,    FQ, FQ)
+BUILTIN_POSTRISC_R2(fnabssq,   FQ, FQ)
+BUILTIN_POSTRISC_R2(fnegsq,    FQ, FQ)
+BUILTIN_POSTRISC_R2(frsqrtsq,  FQ, FQ)
+BUILTIN_POSTRISC_R2(fsqrtsq,   FQ, FQ)
+
+BUILTIN_POSTRISC_R3(fabsdsq,   FQ, FQ, FQ)
+BUILTIN_POSTRISC_R3(fnabsdsq,  FQ, FQ, FQ)
+BUILTIN_POSTRISC_R3(faddsq,    FQ, FQ, FQ)
+BUILTIN_POSTRISC_R3(fnaddsq,   FQ, FQ, FQ)
+BUILTIN_POSTRISC_R3(faminsq,   FQ, FQ, FQ)
+BUILTIN_POSTRISC_R3(famaxsq,   FQ, FQ, FQ)
+BUILTIN_POSTRISC_R3(fmaxsq,    FQ, FQ, FQ)
+BUILTIN_POSTRISC_R3(fminsq,    FQ, FQ, FQ)
+BUILTIN_POSTRISC_R3(fdivsq,    FQ, FQ, FQ)
+BUILTIN_POSTRISC_R3(fdotsq,    FQ, FQ, FQ)
+BUILTIN_POSTRISC_R3(fmulsq,    FQ, FQ, FQ)
+BUILTIN_POSTRISC_R3(fnmulsq,   FQ, FQ, FQ)
+BUILTIN_POSTRISC_R3(fsubsq,    FQ, FQ, FQ)
+
+BUILTIN_POSTRISC_R4(fmaddsq,   FQ, FQ, FQ, FQ)
+BUILTIN_POSTRISC_R4(fnmaddsq,  FQ, FQ, FQ, FQ)
+BUILTIN_POSTRISC_R4(fmsubsq,   FQ, FQ, FQ, FQ)
+BUILTIN_POSTRISC_R4(fnmsubsq,  FQ, FQ, FQ, FQ)
+BUILTIN_POSTRISC_R4(fmergesq,  FQ, FQ, FQ, FQ)
+
+///////////////////////////////////////////////////////////////////////////////////////
+// fp vector packed half
+///////////////////////////////////////////////////////////////////////////////////////
+
+BUILTIN_POSTRISC_R2(fabsph,    VFH, VFH)
+BUILTIN_POSTRISC_R2(fnabsph,   VFH, VFH)
+BUILTIN_POSTRISC_R2(fnegph,    VFH, VFH)
+BUILTIN_POSTRISC_R2(frsqrtph,  VFH, VFH)
+BUILTIN_POSTRISC_R2(fsqrtph,   VFH, VFH)
+
+BUILTIN_POSTRISC_R3(fabsdph,   VFH, VFH, VFH)
+BUILTIN_POSTRISC_R3(fnabsdph,  VFH, VFH, VFH)
+BUILTIN_POSTRISC_R3(faddph,    VFH, VFH, VFH)
+BUILTIN_POSTRISC_R3(fnaddph,   VFH, VFH, VFH)
+BUILTIN_POSTRISC_R3(faminph,   VFH, VFH, VFH)
+BUILTIN_POSTRISC_R3(famaxph,   VFH, VFH, VFH)
+BUILTIN_POSTRISC_R3(fmaxph,    VFH, VFH, VFH)
+BUILTIN_POSTRISC_R3(fminph,    VFH, VFH, VFH)
+BUILTIN_POSTRISC_R3(fdivph,    VFH, VFH, VFH)
+BUILTIN_POSTRISC_R3(fdotph,    VFH, VFH, VFH)
+BUILTIN_POSTRISC_R3(fmulph,    VFH, VFH, VFH)
+BUILTIN_POSTRISC_R3(fnmulph,   VFH, VFH, VFH)
+BUILTIN_POSTRISC_R3(fsubph,    VFH, VFH, VFH)
+
+BUILTIN_POSTRISC_R4(fmaddph,   VFH, VFH, VFH, VFH)
+BUILTIN_POSTRISC_R4(fnmaddph,  VFH, VFH, VFH, VFH)
+BUILTIN_POSTRISC_R4(fmsubph,   VFH, VFH, VFH, VFH)
+BUILTIN_POSTRISC_R4(fnmsubph,  VFH, VFH, VFH, VFH)
+BUILTIN_POSTRISC_R4(fmergeph,  VFH, VFH, VFH, VFH)
+
+// horizontal
+BUILTIN_POSTRISC_R3(faddcph,   VFH, VFH, VFH)
+BUILTIN_POSTRISC_R3(faddhph,   VFH, VFH, VFH)
+BUILTIN_POSTRISC_R3(fmulhph,   VFH, VFH, VFH)
+BUILTIN_POSTRISC_R3(fsubcph,   VFH, VFH, VFH)
+BUILTIN_POSTRISC_R3(fsubhph,   VFH, VFH, VFH)
+
+///////////////////////////////////////////////////////////////////////////////////////
+// fp vector packed single
+///////////////////////////////////////////////////////////////////////////////////////
+
+BUILTIN_POSTRISC_R2(fabsps,    VFS, VFS)
+BUILTIN_POSTRISC_R2(fnabsps,   VFS, VFS)
+BUILTIN_POSTRISC_R2(fnegps,    VFS, VFS)
+BUILTIN_POSTRISC_R2(frsqrtps,  VFS, VFS)
+BUILTIN_POSTRISC_R2(fsqrtps,   VFS, VFS)
+
+BUILTIN_POSTRISC_R3(fabsdps,   VFS, VFS, VFS)
+BUILTIN_POSTRISC_R3(fnabsdps,  VFS, VFS, VFS)
+BUILTIN_POSTRISC_R3(faddps,    VFS, VFS, VFS)
+BUILTIN_POSTRISC_R3(fnaddps,   VFS, VFS, VFS)
+BUILTIN_POSTRISC_R3(faminps,   VFS, VFS, VFS)
+BUILTIN_POSTRISC_R3(famaxps,   VFS, VFS, VFS)
+BUILTIN_POSTRISC_R3(fmaxps,    VFS, VFS, VFS)
+BUILTIN_POSTRISC_R3(fminps,    VFS, VFS, VFS)
+BUILTIN_POSTRISC_R3(fdivps,    VFS, VFS, VFS)
+BUILTIN_POSTRISC_R3(fdotps,    VFS, VFS, VFS)
+BUILTIN_POSTRISC_R3(fmulps,    VFS, VFS, VFS)
+BUILTIN_POSTRISC_R3(fnmulps,   VFS, VFS, VFS)
+BUILTIN_POSTRISC_R3(fsubps,    VFS, VFS, VFS)
+
+BUILTIN_POSTRISC_R4(fmaddps,   VFS, VFS, VFS, VFS)
+BUILTIN_POSTRISC_R4(fnmaddps,  VFS, VFS, VFS, VFS)
+BUILTIN_POSTRISC_R4(fmsubps,   VFS, VFS, VFS, VFS)
+BUILTIN_POSTRISC_R4(fnmsubps,  VFS, VFS, VFS, VFS)
+BUILTIN_POSTRISC_R4(fmergeps,  VFS, VFS, VFS, VFS)
+
+// horizontal
+BUILTIN_POSTRISC_R3(faddcps,   VFS, VFS, VFS)
+BUILTIN_POSTRISC_R3(faddhps,   VFS, VFS, VFS)
+BUILTIN_POSTRISC_R3(fmulhps,   VFS, VFS, VFS)
+BUILTIN_POSTRISC_R3(fsubcps,   VFS, VFS, VFS)
+BUILTIN_POSTRISC_R3(fsubhps,   VFS, VFS, VFS)
+
+///////////////////////////////////////////////////////////////////////////////////////
+// fp vector packed double
+///////////////////////////////////////////////////////////////////////////////////////
+
+BUILTIN_POSTRISC_R2(fabspd,    VFD, VFD)
+BUILTIN_POSTRISC_R2(fnabspd,   VFD, VFD)
+BUILTIN_POSTRISC_R2(fnegpd,    VFD, VFD)
+BUILTIN_POSTRISC_R2(frsqrtpd,  VFD, VFD)
+BUILTIN_POSTRISC_R2(fsqrtpd,   VFD, VFD)
+
+BUILTIN_POSTRISC_R3(fabsdpd,   VFD, VFD, VFD)
+BUILTIN_POSTRISC_R3(fnabsdpd,  VFD, VFD, VFD)
+BUILTIN_POSTRISC_R3(faddpd,    VFD, VFD, VFD)
+BUILTIN_POSTRISC_R3(fnaddpd,   VFD, VFD, VFD)
+BUILTIN_POSTRISC_R3(faminpd,   VFD, VFD, VFD)
+BUILTIN_POSTRISC_R3(famaxpd,   VFD, VFD, VFD)
+BUILTIN_POSTRISC_R3(fmaxpd,    VFD, VFD, VFD)
+BUILTIN_POSTRISC_R3(fminpd,    VFD, VFD, VFD)
+BUILTIN_POSTRISC_R3(fdivpd,    VFD, VFD, VFD)
+BUILTIN_POSTRISC_R3(fdotpd,    VFD, VFD, VFD)
+BUILTIN_POSTRISC_R3(fmulpd,    VFD, VFD, VFD)
+BUILTIN_POSTRISC_R3(fnmulpd,   VFD, VFD, VFD)
+BUILTIN_POSTRISC_R3(fsubpd,    VFD, VFD, VFD)
+
+BUILTIN_POSTRISC_R4(fmaddpd,   VFD, VFD, VFD, VFD)
+BUILTIN_POSTRISC_R4(fnmaddpd,  VFD, VFD, VFD, VFD)
+BUILTIN_POSTRISC_R4(fmsubpd,   VFD, VFD, VFD, VFD)
+BUILTIN_POSTRISC_R4(fnmsubpd,  VFD, VFD, VFD, VFD)
+BUILTIN_POSTRISC_R4(fmergepd,  VFD, VFD, VFD, VFD)
+
+// horizontal
+BUILTIN_POSTRISC_R3(faddcpd,   VFD, VFD, VFD)
+BUILTIN_POSTRISC_R3(faddhpd,   VFD, VFD, VFD)
+BUILTIN_POSTRISC_R3(fmulhpd,   VFD, VFD, VFD)
+BUILTIN_POSTRISC_R3(fsubcpd,   VFD, VFD, VFD)
+BUILTIN_POSTRISC_R3(fsubhpd,   VFD, VFD, VFD)
+
+///////////////////////////////////////////////////////////////////////////////////////
+// int vector 1-byte
+///////////////////////////////////////////////////////////////////////////////////////
+
+BUILTIN_POSTRISC_R3(vaddcb,    VUB, VUB, VUB)
+BUILTIN_POSTRISC_R3(vaddob,    VIB, VIB, VIB)
+BUILTIN_POSTRISC_R3(vaddssb,   VIB, VIB, VIB)
+BUILTIN_POSTRISC_R3(vaddusb,   VUB, VUB, VUB)
+BUILTIN_POSTRISC_R3(vaddub,    VUB, VUB, VUB)
+BUILTIN_POSTRISC_R3(vavgub,    VUB, VUB, VUB)
+BUILTIN_POSTRISC_R3(vavgsb,    VIB, VIB, VIB)
+BUILTIN_POSTRISC_R3(vcmpeqb,   VIB, VIB, VIB)
+BUILTIN_POSTRISC_R3(vcmpltb,   VIB, VIB, VIB)
+BUILTIN_POSTRISC_R3(vcmpltub,  VUB, VUB, VUB)
+BUILTIN_POSTRISC_R3(vmaxsb,    VIB, VIB, VIB)
+BUILTIN_POSTRISC_R3(vmaxub,    VUB, VUB, VUB)
+BUILTIN_POSTRISC_R3(vminsb,    VIB, VIB, VIB)
+BUILTIN_POSTRISC_R3(vminub,    VUB, VUB, VUB)
+BUILTIN_POSTRISC_R3(vrolb,     VUB, VUB, VUB)
+BUILTIN_POSTRISC_R3(vrorb,     VUB, VUB, VUB)
+BUILTIN_POSTRISC_R3(vsllb,     VUB, VUB, VUB)
+BUILTIN_POSTRISC_R3(vsrab,     VIB, VIB, VIB)
+BUILTIN_POSTRISC_R3(vsrlb,     VUB, VUB, VUB)
+BUILTIN_POSTRISC_R3(vsubbb,    VUB, VUB, VUB)
+BUILTIN_POSTRISC_R3(vsubob,    VIB, VIB, VIB)
+BUILTIN_POSTRISC_R3(vsubub,    VUB, VUB, VUB)
+BUILTIN_POSTRISC_R3(vsubssb,   VIB, VIB, VIB)
+BUILTIN_POSTRISC_R3(vsubusb,   VUB, VUB, VUB)
+BUILTIN_POSTRISC_R3(vmrghb,    VUB, VUB, VUB)
+BUILTIN_POSTRISC_R3(vmrglb,    VUB, VUB, VUB)
+
+///////////////////////////////////////////////////////////////////////////////////////
+// int vector 2-byte
+///////////////////////////////////////////////////////////////////////////////////////
+
+BUILTIN_POSTRISC_R3(vaddch,    VUH, VUH, VUH)
+BUILTIN_POSTRISC_R3(vaddoh,    VIH, VIH, VIH)
+BUILTIN_POSTRISC_R3(vaddssh,   VIH, VIH, VIH)
+BUILTIN_POSTRISC_R3(vaddush,   VUH, VUH, VUH)
+BUILTIN_POSTRISC_R3(vadduh,    VUH, VUH, VUH)
+BUILTIN_POSTRISC_R3(vavguh,    VUH, VUH, VUH)
+BUILTIN_POSTRISC_R3(vavgsh,    VIH, VIH, VIH)
+BUILTIN_POSTRISC_R3(vcmpeqh,   VIH, VIH, VIH)
+BUILTIN_POSTRISC_R3(vcmplth,   VIH, VIH, VIH)
+BUILTIN_POSTRISC_R3(vcmpltuh,  VUH, VUH, VUH)
+BUILTIN_POSTRISC_R3(vmaxsh,    VIH, VIH, VIH)
+BUILTIN_POSTRISC_R3(vmaxuh,    VUH, VUH, VUH)
+BUILTIN_POSTRISC_R3(vminsh,    VIH, VIH, VIH)
+BUILTIN_POSTRISC_R3(vminuh,    VUH, VUH, VUH)
+BUILTIN_POSTRISC_R3(vrolh,     VUH, VUH, VUH)
+BUILTIN_POSTRISC_R3(vrorh,     VUH, VUH, VUH)
+BUILTIN_POSTRISC_R3(vsllh,     VUH, VUH, VUH)
+BUILTIN_POSTRISC_R3(vsrah,     VIH, VIH, VIH)
+BUILTIN_POSTRISC_R3(vsrlh,     VUH, VUH, VUH)
+BUILTIN_POSTRISC_R3(vsubbh,    VUH, VUH, VUH)
+BUILTIN_POSTRISC_R3(vsuboh,    VIH, VIH, VIH)
+BUILTIN_POSTRISC_R3(vsubuh,    VUH, VUH, VUH)
+BUILTIN_POSTRISC_R3(vsubssh,   VIH, VIH, VIH)
+BUILTIN_POSTRISC_R3(vsubush,   VUH, VUH, VUH)
+BUILTIN_POSTRISC_R3(vmrghh,    VUH, VUH, VUH)
+BUILTIN_POSTRISC_R3(vmrglh,    VUH, VUH, VUH)
+
+///////////////////////////////////////////////////////////////////////////////////////
+// int vector 4-byte
+///////////////////////////////////////////////////////////////////////////////////////
+
+BUILTIN_POSTRISC_R3(vaddcw,    VUW, VUW, VUW)
+BUILTIN_POSTRISC_R3(vaddow,    VIW, VIW, VIW)
+BUILTIN_POSTRISC_R3(vaddssw,   VIW, VIW, VIW)
+BUILTIN_POSTRISC_R3(vaddusw,   VUW, VUW, VUW)
+BUILTIN_POSTRISC_R3(vadduw,    VUW, VUW, VUW)
+BUILTIN_POSTRISC_R3(vavguw,    VUW, VUW, VUW)
+BUILTIN_POSTRISC_R3(vavgsw,    VIW, VIW, VIW)
+BUILTIN_POSTRISC_R3(vcmpeqw,   VIW, VIW, VIW)
+BUILTIN_POSTRISC_R3(vcmpltw,   VIW, VIW, VIW)
+BUILTIN_POSTRISC_R3(vcmpltuw,  VUW, VUW, VUW)
+BUILTIN_POSTRISC_R3(vmaxsw,    VIW, VIW, VIW)
+BUILTIN_POSTRISC_R3(vmaxuw,    VUW, VUW, VUW)
+BUILTIN_POSTRISC_R3(vminsw,    VIW, VIW, VIW)
+BUILTIN_POSTRISC_R3(vminuw,    VUW, VUW, VUW)
+BUILTIN_POSTRISC_R3(vrolw,     VUW, VUW, VUW)
+BUILTIN_POSTRISC_R3(vrorw,     VUW, VUW, VUW)
+BUILTIN_POSTRISC_R3(vsllw,     VUW, VUW, VUW)
+BUILTIN_POSTRISC_R3(vsraw,     VIW, VIW, VIW)
+BUILTIN_POSTRISC_R3(vsrlw,     VUW, VUW, VUW)
+BUILTIN_POSTRISC_R3(vsubbw,    VUW, VUW, VUW)
+BUILTIN_POSTRISC_R3(vsubow,    VIW, VIW, VIW)
+BUILTIN_POSTRISC_R3(vsubuw,    VUW, VUW, VUW)
+BUILTIN_POSTRISC_R3(vsubssw,   VIW, VIW, VIW)
+BUILTIN_POSTRISC_R3(vsubusw,   VUW, VUW, VUW)
+BUILTIN_POSTRISC_R3(vmrghw,    VUW, VUW, VUW)
+BUILTIN_POSTRISC_R3(vmrglw,    VUW, VUW, VUW)
+
+///////////////////////////////////////////////////////////////////////////////////////
+// int vector 8-byte
+///////////////////////////////////////////////////////////////////////////////////////
+
+BUILTIN_POSTRISC_R3(vaddcd,    VUD, VUD, VUD)
+BUILTIN_POSTRISC_R3(vaddod,    VID, VID, VID)
+BUILTIN_POSTRISC_R3(vaddssd,   VID, VID, VID)
+BUILTIN_POSTRISC_R3(vaddusd,   VUD, VUD, VUD)
+BUILTIN_POSTRISC_R3(vaddud,    VUD, VUD, VUD)
+BUILTIN_POSTRISC_R3(vavgud,    VUD, VUD, VUD)
+BUILTIN_POSTRISC_R3(vavgsd,    VID, VID, VID)
+BUILTIN_POSTRISC_R3(vcmpeqd,   VID, VID, VID)
+BUILTIN_POSTRISC_R3(vcmpltd,   VID, VID, VID)
+BUILTIN_POSTRISC_R3(vcmpltud,  VUD, VUD, VUD)
+BUILTIN_POSTRISC_R3(vmaxsd,    VID, VID, VID)
+BUILTIN_POSTRISC_R3(vmaxud,    VUD, VUD, VUD)
+BUILTIN_POSTRISC_R3(vminsd,    VID, VID, VID)
+BUILTIN_POSTRISC_R3(vminud,    VUD, VUD, VUD)
+BUILTIN_POSTRISC_R3(vrold,     VUD, VUD, VUD)
+BUILTIN_POSTRISC_R3(vrord,     VUD, VUD, VUD)
+BUILTIN_POSTRISC_R3(vslld,     VUD, VUD, VUD)
+BUILTIN_POSTRISC_R3(vsrad,     VID, VID, VID)
+BUILTIN_POSTRISC_R3(vsrld,     VUD, VUD, VUD)
+BUILTIN_POSTRISC_R3(vsubbd,    VUD, VUD, VUD)
+BUILTIN_POSTRISC_R3(vsubod,    VID, VID, VID)
+BUILTIN_POSTRISC_R3(vsubud,    VUD, VUD, VUD)
+BUILTIN_POSTRISC_R3(vsubssd,   VID, VID, VID)
+BUILTIN_POSTRISC_R3(vsubusd,   VUD, VUD, VUD)
+BUILTIN_POSTRISC_R3(vmrghd,    VUD, VUD, VUD)
+BUILTIN_POSTRISC_R3(vmrgld,    VUD, VUD, VUD)
+
+///////////////////////////////////////////////////////////////////////////////////////
+// int vector mixed
+///////////////////////////////////////////////////////////////////////////////////////
+
+BUILTIN_POSTRISC_R3(vpksssh,   VUB, VUH, VUH)
+BUILTIN_POSTRISC_R3(vpksssw,   VUH, VUW, VUW)
+BUILTIN_POSTRISC_R3(vpksssd,   VUW, VUD, VUD)
+BUILTIN_POSTRISC_R3(vpksush,   VUB, VUH, VUH)
+BUILTIN_POSTRISC_R3(vpksusw,   VUH, VUW, VUW)
+BUILTIN_POSTRISC_R3(vpksusd,   VUW, VUD, VUD)
+BUILTIN_POSTRISC_R3(vpkuumh,   VUB, VUH, VUH)
+BUILTIN_POSTRISC_R3(vpkuumw,   VUH, VUW, VUW)
+BUILTIN_POSTRISC_R3(vpkuumd,   VUW, VUD, VUD)
+BUILTIN_POSTRISC_R3(vpkuush,   VUB, VUH, VUH)
+BUILTIN_POSTRISC_R3(vpkuusw,   VUH, VUW, VUW)
+BUILTIN_POSTRISC_R3(vpkuusd,   VUW, VUD, VUD)
+
+BUILTIN_POSTRISC_R2(vupkhsb,   VUH, VUB)
+BUILTIN_POSTRISC_R2(vupkhsh,   VUW, VUH)
+BUILTIN_POSTRISC_R2(vupkhsw,   VUD, VUW)
+BUILTIN_POSTRISC_R2(vupklsb,   VUH, VUB)
+BUILTIN_POSTRISC_R2(vupklsh,   VUW, VUH)
+BUILTIN_POSTRISC_R2(vupklsw,   VUD, VUW)
+
+#undef LANGBUILTIN
+#undef TARGET_HEADER_BUILTIN
+#undef TARGET_BUILTIN
+#undef BUILTIN
