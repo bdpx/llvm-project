@@ -374,10 +374,22 @@ def LgammaF128 : Builtin {
   let Prototype = "__float128(__float128)";
 }
 
+def LLrintF16 : Builtin {
+  let Spellings = ["__builtin_llrintf16"];
+  let Attributes = [FunctionWithBuiltinPrefix, NoThrow, ConstIgnoringErrnoAndExceptions];
+  let Prototype = "long long int(_Float16)";
+}
+
 def LLrintF128 : Builtin {
   let Spellings = ["__builtin_llrintf128"];
   let Attributes = [FunctionWithBuiltinPrefix, NoThrow, ConstIgnoringErrnoAndExceptions];
   let Prototype = "long long int(__float128)";
+}
+
+def LLroundF16 : Builtin {
+  let Spellings = ["__builtin_llroundf16"];
+  let Attributes = [FunctionWithBuiltinPrefix, NoThrow, ConstIgnoringErrnoAndExceptions];
+  let Prototype = "long long int(_Float16)";
 }
 
 def LLroundF128 : Builtin {
@@ -416,16 +428,34 @@ def LogF16F128 : Builtin, F16F128MathTemplate {
   let Prototype = "T(T)";
 }
 
+def LrintF16 : Builtin {
+  let Spellings = ["__builtin_lrintf16"];
+  let Attributes = [FunctionWithBuiltinPrefix, NoThrow, ConstIgnoringErrnoAndExceptions];
+  let Prototype = "long int(_Float16)";
+}
+
 def LrintF128 : Builtin {
   let Spellings = ["__builtin_lrintf128"];
   let Attributes = [FunctionWithBuiltinPrefix, NoThrow, ConstIgnoringErrnoAndExceptions];
   let Prototype = "long int(__float128)";
 }
 
+def LroundF16 : Builtin {
+  let Spellings = ["__builtin_lroundf16"];
+  let Attributes = [FunctionWithBuiltinPrefix, NoThrow, ConstIgnoringErrnoAndExceptions];
+  let Prototype = "long int(_Float16)";
+}
+
 def LroundF128 : Builtin {
   let Spellings = ["__builtin_lroundf128"];
   let Attributes = [FunctionWithBuiltinPrefix, NoThrow, ConstIgnoringErrnoAndExceptions];
   let Prototype = "long int(__float128)";
+}
+
+def NearbyintF16 : Builtin {
+  let Spellings = ["__builtin_nearbyintf16"];
+  let Attributes = [FunctionWithBuiltinPrefix, NoThrow, Const];
+  let Prototype = "_Float16(_Float16)";
 }
 
 def NearbyintF128 : Builtin {
@@ -690,6 +720,13 @@ def SignbitF : Builtin {
   let Attributes = [FunctionWithBuiltinPrefix, NoThrow, Const,
                     Constexpr];
   let Prototype = "int(float)";
+}
+
+def SignbitF16 : Builtin {
+  let Spellings = ["__builtin_signbitf16"];
+  let Attributes = [FunctionWithBuiltinPrefix, NoThrow, Const,
+                    Constexpr];
+  let Prototype = "int(_Float16)";
 }
 
 def SignbitL : Builtin {
