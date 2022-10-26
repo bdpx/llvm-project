@@ -972,6 +972,7 @@ static RValue tryEmitFPMathIntrinsic(CIRGenFunction &cgf, const CallExpr *e,
   case Builtin::BInearbyintl:
   case Builtin::BI__builtin_nearbyint:
   case Builtin::BI__builtin_nearbyintf:
+  case Builtin::BI__builtin_nearbyintf16:
   case Builtin::BI__builtin_nearbyintl:
   case Builtin::BI__builtin_nearbyintf128:
   case Builtin::BI__builtin_elementwise_nearbyint:
@@ -1095,6 +1096,7 @@ static RValue tryEmitFPMathIntrinsic(CIRGenFunction &cgf, const CallExpr *e,
   case Builtin::BIlroundl:
   case Builtin::BI__builtin_lround:
   case Builtin::BI__builtin_lroundf:
+  case Builtin::BI__builtin_lroundf16:
   case Builtin::BI__builtin_lroundl:
   case Builtin::BI__builtin_lroundf128:
     return emitUnaryMaybeConstrainedFPToIntBuiltin<cir::LroundOp>(cgf, *e);
@@ -1103,6 +1105,7 @@ static RValue tryEmitFPMathIntrinsic(CIRGenFunction &cgf, const CallExpr *e,
   case Builtin::BIllroundl:
   case Builtin::BI__builtin_llround:
   case Builtin::BI__builtin_llroundf:
+  case Builtin::BI__builtin_llroundf16:
   case Builtin::BI__builtin_llroundl:
   case Builtin::BI__builtin_llroundf128:
     return emitUnaryMaybeConstrainedFPToIntBuiltin<cir::LlroundOp>(cgf, *e);
@@ -1111,6 +1114,7 @@ static RValue tryEmitFPMathIntrinsic(CIRGenFunction &cgf, const CallExpr *e,
   case Builtin::BIlrintl:
   case Builtin::BI__builtin_lrint:
   case Builtin::BI__builtin_lrintf:
+  case Builtin::BI__builtin_lrintf16:
   case Builtin::BI__builtin_lrintl:
   case Builtin::BI__builtin_lrintf128:
     return emitUnaryMaybeConstrainedFPToIntBuiltin<cir::LrintOp>(cgf, *e);
@@ -1119,6 +1123,7 @@ static RValue tryEmitFPMathIntrinsic(CIRGenFunction &cgf, const CallExpr *e,
   case Builtin::BIllrintl:
   case Builtin::BI__builtin_llrint:
   case Builtin::BI__builtin_llrintf:
+  case Builtin::BI__builtin_llrintf16:
   case Builtin::BI__builtin_llrintl:
   case Builtin::BI__builtin_llrintf128:
     return emitUnaryMaybeConstrainedFPToIntBuiltin<cir::LlrintOp>(cgf, *e);
@@ -2820,6 +2825,7 @@ RValue CIRGenFunction::emitBuiltinExpr(const GlobalDecl &gd, unsigned builtinID,
     return errorBuiltinNYI(*this, e, builtinID);
   case Builtin::BI__builtin_signbit:
   case Builtin::BI__builtin_signbitf:
+  case Builtin::BI__builtin_signbitf16:
   case Builtin::BI__builtin_signbitl: {
     CIRGenFunction::CIRGenFPOptionsRAII fPOptsRAII(*this, e);
     mlir::Location loc = getLoc(e->getBeginLoc());
