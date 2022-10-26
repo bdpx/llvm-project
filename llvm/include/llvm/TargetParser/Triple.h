@@ -109,6 +109,7 @@ public:
     wasm64,      // WebAssembly with 64-bit pointers
     renderscript32, // 32-bit RenderScript
     renderscript64, // 64-bit RenderScript
+    postrisc,       // Postrisc virtual processor
     ve,             // NEC SX-Aurora Vector Engine
     LastArchType = ve
   };
@@ -1138,6 +1139,11 @@ public:
 
   /// Tests whether the target is SPARC.
   bool isSPARC() const { return isSPARC32() || isSPARC64(); }
+
+  /// Tests whether the target is Postrisc.
+  bool isPostrisc() const {
+    return getArch() == Triple::postrisc;
+  }
 
   /// Tests whether the target is SystemZ.
   bool isSystemZ() const {
