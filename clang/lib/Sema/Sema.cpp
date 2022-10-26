@@ -59,6 +59,7 @@
 #include "clang/Sema/SemaOpenACC.h"
 #include "clang/Sema/SemaOpenCL.h"
 #include "clang/Sema/SemaOpenMP.h"
+#include "clang/Sema/SemaPostrisc.h"
 #include "clang/Sema/SemaPPC.h"
 #include "clang/Sema/SemaPseudoObject.h"
 #include "clang/Sema/SemaRISCV.h"
@@ -297,6 +298,7 @@ Sema::Sema(Preprocessor &pp, ASTContext &ctxt, ASTConsumer &consumer,
       OpenACCPtr(std::make_unique<SemaOpenACC>(*this)),
       OpenCLPtr(std::make_unique<SemaOpenCL>(*this)),
       OpenMPPtr(std::make_unique<SemaOpenMP>(*this)),
+      PostriscPtr(std::make_unique<SemaPostrisc>(*this)),
       PPCPtr(std::make_unique<SemaPPC>(*this)),
       PseudoObjectPtr(std::make_unique<SemaPseudoObject>(*this)),
       RISCVPtr(std::make_unique<SemaRISCV>(*this)),
