@@ -357,6 +357,18 @@ static uint32_t loongarchVariantFromElfFlags(const elf::ELFHeader &header) {
   }
 }
 
+static uint32_t postriscVariantFromElfFlags(const elf::ELFHeader &header) {
+  uint32_t fileclass = header.e_ident[EI_CLASS];
+  switch (fileclass) {
+  case llvm::ELF::ELFCLASS32:
+    return ArchSpec::ePostriscSubType_unknown;
+  case llvm::ELF::ELFCLASS64:
+    return ArchSpec::ePostriscSubType_postrisc;
+  default:
+    return ArchSpec::ePostriscSubType_unknown;
+  }
+}
+
 static uint32_t subTypeFromElfHeader(const elf::ELFHeader &header) {
   if (header.e_machine == llvm::ELF::EM_MIPS)
     return mipsVariantFromElfFlags(header);
@@ -366,6 +378,8 @@ static uint32_t subTypeFromElfHeader(const elf::ELFHeader &header) {
     return riscvVariantFromElfFlags(header);
   else if (header.e_machine == llvm::ELF::EM_LOONGARCH)
     return loongarchVariantFromElfFlags(header);
+  else if (header.e_machine == llvm::ELF::EM_POSTRISC)
+    return postriscVariantFromElfFlags(header);
 
   return LLDB_INVALID_CPUTYPE;
 }
