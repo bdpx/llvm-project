@@ -5,6 +5,7 @@ add_lldb_library(lldbRegister NO_PLUGIN_DEPENDENCIES
   Common/RegisterInfo_arm.cpp
   Common/RegisterInfo_arm64.cpp
   Common/RegisterInfo_loongarch64.cpp
+  Common/RegisterInfo_postrisc.cpp
   Common/RegisterInfo_ppc64.cpp
   Common/RegisterInfo_ppc64le.cpp
   Common/RegisterInfo_riscv32.cpp

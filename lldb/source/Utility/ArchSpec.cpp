@@ -257,6 +257,10 @@ static constexpr const CoreDefinition g_core_definitions[] = {
 
     {eByteOrderLittle, 4, 1, 4, llvm::Triple::wasm32, ArchSpec::eCore_wasm32,
      "wasm32"},
+
+    {eByteOrderLittle, 8, 4, 4, llvm::Triple::postrisc, ArchSpec::eCore_postrisc,
+     "postrisc"},
+
     {eByteOrderLittle, 8, 4, 16, llvm::Triple::amdgpu, ArchSpec::eCore_amd_gpu,
      "amdgpu"},
 };
