@@ -1,0 +1,12 @@
+# RUN: yaml2obj --docnum=2 %s > %t64
+# RUN: lldb-test object-file %t64 | FileCheck --check-prefix=CHECK-LA64 %s
+
+# CHECK-LA64: Architecture: postrisc--
+
+--- !ELF
+FileHeader:
+  Class:           ELFCLASS64
+  Data:            ELFDATA2LSB
+  Type:            ET_EXEC
+  Machine:         EM_POSTRISC
+...
