@@ -113,6 +113,11 @@ public:
     eLoongArchSubType_loongarch64,
   };
 
+  enum PostriscSubType {
+    ePostriscSubType_unknown,
+    ePostriscSubType_postrisc,
+  };
+
   enum Core {
     eCore_arm_generic,
     eCore_arm_armv4,
@@ -222,6 +227,7 @@ public:
     eCore_avr,
 
     eCore_wasm32,
+    eCore_postrisc,
 
     kNumCores,
 
