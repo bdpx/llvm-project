@@ -21,9 +21,12 @@
 #include "llvm/Object/SymbolicFile.h"
 #include "llvm/Support/Casting.h"
 #include "llvm/Support/Error.h"
+#include "llvm/Support/Debug.h"
 #include "llvm/Support/ErrorHandling.h"
 #include "llvm/TargetParser/Triple.h"
 #include <cassert>
+
+#define DEBUG_TYPE "relocation-resolver"
 
 namespace llvm {
 namespace object {
@@ -597,6 +600,48 @@ static uint64_t resolveLoongArch(uint64_t Type, uint64_t Offset, uint64_t S,
   }
 }
 
+static bool supportsPostrisc(uint64_t Type) {
+  dbgs() << "supportsPostrisc=" << Type << "\n";
+  switch (Type) {
+/*
+  case ELF::R_POSTRISC_ABS32:
+  case ELF::R_POSTRISC_ABS64:
+  case ELF::R_POSTRISC_PREL16:
+  case ELF::R_POSTRISC_PREL32:
+  case ELF::R_POSTRISC_PREL64:
+    return true;
+*/
+  default:
+    return false;
+  }
+}
+
+static uint64_t resolvePostrisc(uint64_t Type, uint64_t Offset, uint64_t S,
+                                uint64_t LocData, int64_t Addend) {
+  dbgs() << "resolvePostrisc=" << Type
+         << " Offset=" << Offset
+         << " S=" << S
+         << " LocData=" << LocData
+         << " Addend=" << Addend << "\n";
+
+  switch (Type) {
+  /*
+  case ELF::R_POSTRISC_ABS32:
+    return (S + Addend) & 0xFFFFFFFF;
+  case ELF::R_POSTRISC_ABS64:
+    return S + Addend;
+  case ELF::R_POSTRISC_PREL16:
+    return (S + Addend - Offset) & 0xFFFF;
+  case ELF::R_POSTRISC_PREL32:
+    return (S + Addend - Offset) & 0xFFFFFFFF;
+  case ELF::R_POSTRISC_PREL64:
+    return S + Addend - Offset;
+  */
+  default:
+    llvm_unreachable("Invalid relocation type");
+  }
+}
+
 static bool supportsCOFFX86(uint64_t Type) {
   switch (Type) {
   case COFF::IMAGE_REL_I386_SECREL:
@@ -814,6 +859,8 @@ getRelocationResolver(const ObjectFile &Obj) {
       case Triple::riscv64:
       case Triple::riscv64be:
         return {supportsRISCV, resolveRISCV};
+      case Triple::postrisc:
+        return {supportsPostrisc, resolvePostrisc};
       default:
         if (isAMDGPU(Obj))
           return {supportsAmdgpu, resolveAmdgpu};
@@ -856,6 +903,8 @@ getRelocationResolver(const ObjectFile &Obj) {
       return {supportsRISCV, resolveRISCV};
     case Triple::csky:
       return {supportsCSKY, resolveCSKY};
+    case Triple::postrisc:
+      return {supportsPostrisc, resolvePostrisc};
     default:
       if (isAMDGPU(Obj))
         return {supportsAmdgpu, resolveAmdgpu};
