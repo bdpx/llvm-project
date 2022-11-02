@@ -359,6 +359,7 @@ void ScalarEnumerationTraits<ELFYAML::ELF_EM>::enumeration(
   ECase(EM_CSKY);
   ECase(EM_LOONGARCH);
   ECase(EM_INTELGT);
+  ECase(EM_POSTRISC);
 #undef ECase
   IO.enumFallback<Hex16>(Value);
 }

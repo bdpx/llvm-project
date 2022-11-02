@@ -255,6 +255,8 @@ uint32_t llvm::object::getELFRelativeRelocationType(uint32_t Machine) {
     break;
   case ELF::EM_LOONGARCH:
     return ELF::R_LARCH_RELATIVE;
+  case ELF::EM_POSTRISC:
+    return ELF::R_POSTRISC_RELATIVE;
   default:
     break;
   }
