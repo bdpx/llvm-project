@@ -700,6 +700,18 @@ void DAGTypeLegalizer::ReplaceValueWith(SDValue From, SDValue To) {
 }
 
 void DAGTypeLegalizer::SetPromotedInteger(SDValue Op, SDValue Result) {
+  LLVM_DEBUG(
+  if (Result.getValueType() !=
+         TLI.getTypeToTransformTo(*DAG.getContext(), Op.getValueType())) {
+     dbgs() << "Invalid type for promoted integer:"
+            << " Result: " << Result.getValueType().getEVTString()
+            << " Op.getValueType():" << Op.getValueType().getEVTString()
+            << " getTypeToTransformTo: " << TLI.getTypeToTransformTo(*DAG.getContext(), Op.getValueType()).getEVTString()
+            << "\n";
+     Result.dump();
+     Op.dump();
+  });
+
   assert(Result.getValueType() ==
          TLI.getTypeToTransformTo(*DAG.getContext(), Op.getValueType()) &&
          "Invalid type for promoted integer");
