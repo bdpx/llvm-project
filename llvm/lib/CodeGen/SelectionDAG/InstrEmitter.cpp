@@ -106,8 +106,9 @@ void InstrEmitter::EmitCopyFromReg(SDValue Op, bool IsClone, Register SrcReg,
 
   // FIXME: The Untyped check is a workaround for SystemZ i128 inline assembly
   // using i128, when it should probably be using v2i64.
+  // FIXME: The Other check is a workaround for Postrisc
   const TargetRegisterClass *UseRC =
-      VT == MVT::Untyped ? nullptr : TLI->getRegClassFor(VT, Op->isDivergent());
+      VT == MVT::Untyped ||  VT == MVT::Other ? nullptr : TLI->getRegClassFor(VT, Op->isDivergent());
 
   for (SDNode *User : Op->users()) {
     bool Match = true;

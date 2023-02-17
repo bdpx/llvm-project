@@ -1052,6 +1052,9 @@ public:
   virtual const TargetRegisterClass *getRegClassFor(MVT VT, bool isDivergent = false) const {
     (void)isDivergent;
     const TargetRegisterClass *RC = RegClassForVT[VT.SimpleTy];
+    if (!RC) {
+        dbgs() << "getRegClassFor: VT.SimpleTy=" << static_cast<int>(VT.SimpleTy) << "\n\n";
+    }
     assert(RC && "This value type is not natively supported!");
     return RC;
   }
