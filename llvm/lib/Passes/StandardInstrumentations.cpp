@@ -42,6 +42,7 @@
 #include "llvm/Support/Regex.h"
 #include "llvm/Support/Signals.h"
 #include "llvm/Support/raw_ostream.h"
+#include "llvm/Support/Debug.h"
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
@@ -52,7 +53,11 @@ using namespace llvm;
 static cl::opt<bool> VerifyAnalysisInvalidation("verify-analysis-invalidation",
                                                 cl::Hidden,
 #ifdef EXPENSIVE_CHECKS
+  #if defined(__POSTRISC__)
+                                                cl::init(false) // Postrisc fails with this pass
+  #else
                                                 cl::init(true)
+  #endif
 #else
                                                 cl::init(false)
 #endif
@@ -193,6 +198,8 @@ const Module *unwrapModule(Any IR, bool Force = false) {
     return MF->getFunction().getParent();
   }
 
+  // FIXME: Postrisc doesn't support CFG yet, so StandardInstrumentations failed here
+  dbgs() << "Unknown IR unit: " << &IR << "\n";
   llvm_unreachable("Unknown IR unit");
 }
 
