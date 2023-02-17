@@ -740,7 +740,13 @@ bool MachineCopyPropagation::hasImplicitOverlap(const MachineInstr &MI,
 /// The umull instruction is unpredictable unless RdHi and RdLo are different.
 bool MachineCopyPropagation::hasOverlappingMultipleDef(
     const MachineInstr &MI, const MachineOperand &MODef, Register Def) {
+// FIXME: postrisc LowerCall failed after
+// https://github.com/bdpx/llvm-project/commit/f90813543b57a9753c549ac0aac083b879b94230
+#if defined(__POSTRISC__)
+  for (const MachineOperand &MIDef : MI.defs()) {
+#else
   for (const MachineOperand &MIDef : MI.all_defs()) {
+#endif
     if ((&MIDef != &MODef) && MIDef.isReg() &&
         TRI->regsOverlap(Def, MIDef.getReg()))
       return true;
