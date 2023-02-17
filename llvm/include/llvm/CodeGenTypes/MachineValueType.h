@@ -326,6 +326,12 @@ namespace llvm {
       case Other:
         llvm_unreachable("Value type is non-standard value, Other.");
       case iPTR:
+#if defined(__POSTRISC__) || 1
+        // FIXME: find a way to pass __POSTRISC__ definition to tablegen
+        //fprintf(stderr, "ASSERT: getSizeInBits called for iPTR (Value type size is target-dependent. Ask TLI)\n");
+        //llvm::sys::PrintStackTrace(dbgs());
+        return TypeSize::getFixed(64);
+#endif
         llvm_unreachable("Value type size is target-dependent. Ask TLI.");
       case pAny:
       case iAny:
