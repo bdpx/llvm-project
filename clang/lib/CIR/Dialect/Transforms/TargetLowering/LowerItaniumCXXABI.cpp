@@ -157,6 +157,7 @@ std::unique_ptr<CIRCXXABI> createItaniumCXXABI(LowerModule &lm) {
   case clang::TargetCXXABI::GenericMIPS:
   case clang::TargetCXXABI::WebAssembly:
   case clang::TargetCXXABI::XL:
+  case clang::TargetCXXABI::GenericPostrisc:
     // FIXME: these ABIS are not yet implemented by CIR. The error is reported
     // by consumers of LowerModule/CIRCXXABI when missing CIRCXXABI is
     // encountered.
