@@ -103,6 +103,9 @@ public:
     case GenericMIPS:
       return T.isMIPS();
 
+    case GenericPostrisc:
+      return T.isPostrisc();
+
     case WebAssembly:
       return T.isWasm();
 
@@ -169,6 +172,7 @@ public:
       //       the this adjustment, so they don't require functions to have any
       //       special alignment and could therefore also return false.
     case GenericItanium:
+    case GenericPostrisc:
     case iOS:
     case WatchOS:
     case Microsoft:
@@ -242,6 +246,7 @@ public:
     case GenericARM:
     case WebAssembly:
     case WatchOS:
+    case GenericPostrisc:
       return false;
 
     case GenericAArch64:
@@ -296,6 +301,7 @@ public:
     case Fuchsia:
     case WebAssembly:
     case WatchOS:
+    case GenericPostrisc:
       return UseTailPaddingUnlessPOD11;
 
     // MSVC always allocates fields in the tail-padding of a base class
