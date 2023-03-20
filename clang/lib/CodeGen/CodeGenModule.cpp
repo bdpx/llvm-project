@@ -98,6 +98,7 @@ static CGCXXABI *createCXXABI(CodeGenModule &CGM) {
   case TargetCXXABI::WatchOS:
   case TargetCXXABI::GenericMIPS:
   case TargetCXXABI::GenericItanium:
+  case TargetCXXABI::GenericPostrisc:
   case TargetCXXABI::WebAssembly:
   case TargetCXXABI::XL:
     return CreateItaniumCXXABI(CGM);
