@@ -894,6 +894,7 @@ CXXABI *ASTContext::createCXXABI(const TargetInfo &T) {
   case TargetCXXABI::WatchOS:
   case TargetCXXABI::GenericAArch64:
   case TargetCXXABI::GenericMIPS:
+  case TargetCXXABI::GenericPostrisc:
   case TargetCXXABI::GenericItanium:
   case TargetCXXABI::WebAssembly:
   case TargetCXXABI::XL:
@@ -13145,6 +13146,7 @@ MangleContext *ASTContext::createMangleContext(const TargetInfo *T) {
   case TargetCXXABI::GenericItanium:
   case TargetCXXABI::GenericARM:
   case TargetCXXABI::GenericMIPS:
+  case TargetCXXABI::GenericPostrisc:
   case TargetCXXABI::iOS:
   case TargetCXXABI::WebAssembly:
   case TargetCXXABI::WatchOS:
@@ -13166,6 +13168,7 @@ MangleContext *ASTContext::createDeviceMangleContext(const TargetInfo &T) {
   case TargetCXXABI::GenericItanium:
   case TargetCXXABI::GenericARM:
   case TargetCXXABI::GenericMIPS:
+  case TargetCXXABI::GenericPostrisc:
   case TargetCXXABI::iOS:
   case TargetCXXABI::WebAssembly:
   case TargetCXXABI::WatchOS:
