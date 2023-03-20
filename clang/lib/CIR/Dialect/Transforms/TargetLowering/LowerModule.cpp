@@ -33,6 +33,7 @@ static std::unique_ptr<CIRCXXABI> createCXXABI(LowerModule &lm) {
   case clang::TargetCXXABI::WatchOS:
   case clang::TargetCXXABI::GenericMIPS:
   case clang::TargetCXXABI::GenericItanium:
+  case clang::TargetCXXABI::GenericPostrisc:
   case clang::TargetCXXABI::WebAssembly:
   case clang::TargetCXXABI::XL:
     return createItaniumCXXABI(lm);
