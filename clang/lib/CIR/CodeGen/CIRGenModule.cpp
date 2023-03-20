@@ -66,6 +66,7 @@ static CIRGenCXXABI *createCXXABI(CIRGenModule &cgm) {
   case TargetCXXABI::GenericAArch64:
   case TargetCXXABI::AppleARM64:
   case TargetCXXABI::GenericARM:
+  case TargetCXXABI::GenericPostrisc:
     return CreateCIRGenItaniumCXXABI(cgm);
   case TargetCXXABI::Microsoft:
     return CreateCIRGenMicrosoftCXXABI(cgm);
