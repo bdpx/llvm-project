@@ -328,6 +328,8 @@ createTargetCodeGenInfo(CodeGenModule &CGM) {
     return createLoongArchTargetCodeGenInfo(
         CGM, Target.getPointerWidth(LangAS::Default), ABIFRLen);
   }
+  //case llvm::Triple::postrisc:
+  //  return createPostriscTargetCodeGenInfo(CGM);
   }
 }
 
