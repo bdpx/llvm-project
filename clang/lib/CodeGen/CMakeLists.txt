@@ -145,6 +145,7 @@ add_clang_library(clangCodeGen
   Targets/MSP430.cpp
   Targets/Mips.cpp
   Targets/NVPTX.cpp
+  Targets/Postrisc.cpp
   Targets/PPC.cpp
   Targets/RISCV.cpp
   Targets/SPIR.cpp
