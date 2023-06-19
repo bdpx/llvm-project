@@ -342,6 +342,8 @@ createTargetCodeGenInfo(CodeGenModule &CGM) {
   }
   case llvm::Triple::xtensa:
     return createXtensaTargetCodeGenInfo(CGM);
+  //case llvm::Triple::postrisc:
+  //  return createPostriscTargetCodeGenInfo(CGM);
   }
 }
 
