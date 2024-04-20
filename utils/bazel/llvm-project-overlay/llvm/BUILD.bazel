@@ -3361,6 +3361,68 @@ llvm_target_lib_list = [lib for lib in [
         ],
     },
     {
+        "name": "Postrisc",
+        "short_name": "Postrisc",
+        "tbl_outs": [
+            (
+                ["-gen-asm-writer"],
+                "lib/Target/Postrisc/PostriscGenAsmWriter.inc",
+            ),
+            (
+                ["-gen-asm-matcher"],
+                "lib/Target/Postrisc/PostriscGenAsmMatcher.inc",
+            ),
+            (
+                ["-gen-emitter"],
+                "lib/Target/Postrisc/PostriscGenMCCodeEmitter.inc",
+            ),
+            (
+                ["-gen-register-info"],
+                [
+                    "lib/Target/Postrisc/PostriscGenRegisterInfo.inc",
+                    "lib/Target/Postrisc/PostriscGenRegisterInfoEnums.inc",
+                    "lib/Target/Postrisc/PostriscGenRegisterInfoMCDesc.inc",
+                    "lib/Target/Postrisc/PostriscGenRegisterInfoHeader.inc",
+                    "lib/Target/Postrisc/PostriscGenRegisterInfoTargetDesc.inc",
+                ],
+            ),
+            (
+                ["-gen-instr-info"],
+                "lib/Target/Postrisc/PostriscGenInstrInfo.inc",
+            ),
+            (
+                ["-gen-dag-isel"],
+                "lib/Target/Postrisc/PostriscGenDAGISel.inc",
+            ),
+            (
+                ["-gen-callingconv"],
+                "lib/Target/Postrisc/PostriscGenCallingConv.inc",
+            ),
+            (
+                ["-gen-subtarget"],
+                "lib/Target/Postrisc/PostriscGenSubtargetInfo.inc",
+            ),
+            (
+                ["-gen-disassembler"],
+                "lib/Target/Postrisc/PostriscGenDisassemblerTables.inc",
+            ),
+            (
+                ["-gen-searchable-tables"],
+                "lib/Target/Postrisc/PostriscGenSearchableTables.inc",
+            ),
+            (
+                [
+                    "-gen-sd-node-info",
+                    "-sdnode-namespace=SPISD",
+                ],
+                "lib/Target/Postrisc/PostriscGenSDNodeInfo.inc",
+            ),
+        ],
+        "tbl_deps": [
+            ":PostriscOptionsTableGen",
+        ],
+    },
+    {
         "name": "PowerPC",
         "short_name": "PPC",
         "tbl_outs": [
