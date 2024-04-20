@@ -17,6 +17,7 @@ DEFAULT_TARGETS = [
     "Mips",
     "MSP430",
     "NVPTX",
+    "Postrisc",
     "PowerPC",
     "RISCV",
     "Sparc",
