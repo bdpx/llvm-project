@@ -591,10 +591,7 @@ PostriscTargetLowering::LowerCall(TargetLowering::CallLoweringInfo &CLI,
   //Register RetReg = MF.addLiveIn(LinkRegister, getRegClassFor(MVT::i64));
 
   SDValue SDLinkRegister = DAG.getRegister(LinkRegister, MVT::i64);
-  Chain = DAG.getCopyToReg(Chain, DL,
-              SDLinkRegister,
-              Call.getValue(0),
-              InGlue);
+  Chain = DAG.getCopyToReg(Chain, DL, SDLinkRegister, Call.getValue(0), InGlue);
   InGlue = Chain.getValue(1);
 
   Chain = DAG.getCopyFromReg(Chain, DL, LinkRegister, MVT::i64, InGlue);
@@ -671,7 +668,7 @@ PostriscTargetLowering::LowerCall(TargetLowering::CallLoweringInfo &CLI,
     InVals.push_back(RV);
   }
 
-  // FIXME: this is a trick to mark all argument registers dirty
+  // FIXME: this is a trick to mark all argument registers (after results) dirty
   for (unsigned i = RVLocs.size(); i < n_used_regs; ++i) {
     unsigned Reg = CurrentReg;
     ++CurrentReg;

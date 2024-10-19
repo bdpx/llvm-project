@@ -78,7 +78,6 @@ ATOMIC_LOAD<misc_opx opx, string OpcStr, PatFrag OpNode, ValueType Ty>
                  !strconcat(OpcStr, "\t$ra, $rb, $memory_order"),
                  [], IIC_iu_instr>;
 
-  // FIXME: can't use NAME as Insn
   def : Pat<(Ty (relaxed_load  <OpNode> iPTR:$rb)), (!cast<InstBase>(NAME) GR:$rb, memory_order_relaxed.value)>;
   def : Pat<(Ty (acquiring_load<OpNode> iPTR:$rb)), (!cast<InstBase>(NAME) GR:$rb, memory_order_acquire.value)>;
   def : Pat<(Ty (seq_cst_load  <OpNode> iPTR:$rb)), (!cast<InstBase>(NAME) GR:$rb, memory_order_seq_cst.value)>;

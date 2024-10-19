@@ -7,7 +7,6 @@
 //===----------------------------------------------------------------------===//
 //
 // This file describes the Postrisc load/store instructions.
-// Load/store part
 //
 //===----------------------------------------------------------------------===//
 
@@ -19,55 +18,43 @@ multiclass Load<opcode_opx opRI, opcode_opx opRC, misc_opx opMIA, misc_opx opMIB
 {
   // base + displacement
   let mayLoad = 1 in
-  def ri : PRIMARY_RabI21<opRI,
-                 (outs GR:$ra), (ins GR:$rb, simm21:$imm),
-                 !strconcat(OpcStr, "\t$ra, $rb, $imm"),
-                 [], itin>;
+  def ri : PRIMARY_RabI21<opRI, (outs GR:$ra), (ins GR:$rb, simm21:$imm),
+        !strconcat(OpcStr, "\t$ra, $rb, $imm"), [], itin>;
 
   // base + displacement extended
   let mayLoad = 1, AddedComplexity = 3 in
-  def ri_ext  : PRIMARY_RabI21_ext<opRI,
-                 (outs GR:$ra), (ins GR:$rb, simm21_ext:$imm),
-                 !strconcat(OpcStr, ".l\t$ra, $rb, $imm"),
-                 [], itin>;
+  def ri_ext  : PRIMARY_RabI21_ext<opRI, (outs GR:$ra), (ins GR:$rb, simm21_ext:$imm),
+        !strconcat(OpcStr, ".l\t$ra, $rb, $imm"), [], itin>;
 
   // ip + forward displacement
   let mayLoad = 1 in
-  def rc : PRIMARY_RaI28<opRC,
-                 (outs GR:$ra), (ins simm28:$imm),
-                 !strconcat(OpcStr, "r\t$ra, $imm"),
-                 [], itin>;
+  def rc : PRIMARY_RaI28<opRC, (outs GR:$ra), (ins simm28:$imm),
+        !strconcat(OpcStr, "r\t$ra, $imm"), [], itin>;
 
   // ip + forward displacement extended
   let mayLoad = 1, AddedComplexity = 3 in
-  def rc_ext : PRIMARY_RaI28_ext<opRC,
-                 (outs GR:$ra), (ins simm28_ext:$imm),
-                 !strconcat(OpcStr, "r.l\t$ra, $imm"),
-                 [], itin>;
+  def rc_ext : PRIMARY_RaI28_ext<opRC, (outs GR:$ra), (ins simm28_ext:$imm),
+        !strconcat(OpcStr, "r.l\t$ra, $imm"), [], itin>;
 
   // base with base post-update immediate
-  let mayLoad = 1, isPostIncrement = 1 in
-  def mia : MISC_RabI10<opMIA,
-                   (outs GR:$ra), (ins GR:$rb, stride_imm:$imm),
-                   !strconcat(OpcStr, "mia\t$ra, $rb, $imm"), [], itin>;
+  let mayLoad = 1, isPostIncrement = 1, Constraints = "$rx = $rb" in
+  def mia : MISC_RabI10<opMIA, (outs GR:$ra, GR:$rx), (ins GR:$rb, stride_imm:$imm),
+        !strconcat(OpcStr, "mia\t$ra, $rb, $imm"), [], itin>;
 
   // base with base post-update immediate (extended)
-  let mayLoad = 1, AddedComplexity = 3, isPostIncrement = 1 in
-  def mia_ext : MISC_RabI10_ext<opMIA,
-                   (outs GR:$ra), (ins GR:$rb, stride_imm_ext:$imm),
-                   !strconcat(OpcStr, "mia.l\t$ra, $rb, $imm"), [], itin>;
+  let mayLoad = 1, AddedComplexity = 3, isPostIncrement = 1, Constraints = "$rx = $rb" in
+  def mia_ext : MISC_RabI10_ext<opMIA, (outs GR:$ra, GR:$rx), (ins GR:$rb, stride_imm_ext:$imm),
+        !strconcat(OpcStr, "mia.l\t$ra, $rb, $imm"), [], itin>;
 
   // base with base pre-update immediate
-  let mayLoad = 1, isPreIncrement = 1 in
-  def mib : MISC_RabI10<opMIB,
-                   (outs GR:$ra), (ins GR:$rb, stride_imm:$imm),
-                   !strconcat(OpcStr, "mib\t$ra, $rb, $imm"), [], itin>;
+  let mayLoad = 1, isPreIncrement = 1, Constraints = "$rx = $rb" in
+  def mib : MISC_RabI10<opMIB, (outs GR:$ra, GR:$rx), (ins GR:$rb, stride_imm:$imm),
+        !strconcat(OpcStr, "mib\t$ra, $rb, $imm"), [], itin>;
 
   // base with base pre-update immediate (extended)
-  let mayLoad = 1, AddedComplexity = 3, isPreIncrement = 1 in
-  def mib_ext : MISC_RabI10_ext<opMIB,
-                   (outs GR:$ra), (ins GR:$rb, stride_imm_ext:$imm),
-                   !strconcat(OpcStr, "mib.l\t$ra, $rb, $imm"), [], itin>;
+  let mayLoad = 1, AddedComplexity = 3, isPreIncrement = 1, Constraints = "$rx = $rb" in
+  def mib_ext : MISC_RabI10_ext<opMIB, (outs GR:$ra, GR:$rx), (ins GR:$rb, stride_imm_ext:$imm),
+        !strconcat(OpcStr, "mib.l\t$ra, $rb, $imm"), [], itin>;
 }
 
 defm LDBZ : Load<opcode_ldbz, opcode_ldbzr, misc_opx_ldbzmia, misc_opx_ldbzmib, "ldbz">;
@@ -88,44 +75,38 @@ multiclass LoadIndexed<opcode_opx opRR, string OpcStr, InstrItinClass itin = IIC
   // base + scaled 64-bit index + displacement
   let mayLoad = 1, isIndexedMemAccess = 1 in
   def rr_s64 : PRIMARY_MemIndexed<opRR, scale_opx_s64,
-                 (outs GR:$ra), (ins GR:$rb, GR:$rc, scale:$scale, indexed_disp:$imm),
-                 !strconcat(OpcStr, "\t$ra, $rb, $rc, $scale, $imm"),
-                 [], itin>;
+        (outs GR:$ra), (ins GR:$rb, GR:$rc, scale:$scale, indexed_disp:$imm),
+        !strconcat(OpcStr, "\t$ra, $rb, $rc, $scale, $imm"), [], itin>;
 
   // base + scaled 64-bit index + displacement extended
   let mayLoad = 1, isIndexedMemAccess = 1, AddedComplexity = 3 in
   def rr_s64_ext : PRIMARY_MemIndexedLong<opRR, scale_opx_s64,
-                 (outs GR:$ra), (ins GR:$rb, GR:$rc, scale:$scale, indexed_disp_ext:$imm),
-                 !strconcat(OpcStr, ".l\t$ra, $rb, $rc, $scale, $imm"),
-                 [], itin>;
+        (outs GR:$ra), (ins GR:$rb, GR:$rc, scale:$scale, indexed_disp_ext:$imm),
+        !strconcat(OpcStr, ".l\t$ra, $rb, $rc, $scale, $imm"), [], itin>;
 
   // base + scaled signed 32-bit index + displacement
   let mayLoad = 1, isIndexedMemAccess = 1 in
   def rr_s32 : PRIMARY_MemIndexed<opRR, scale_opx_s32,
-                 (outs GR:$ra), (ins GR:$rb, GR:$rc, scale:$scale, indexed_disp:$imm),
-                 !strconcat(OpcStr, ".ws\t$ra, $rb, $rc, $scale, $imm"),
-                 [], itin>;
+        (outs GR:$ra), (ins GR:$rb, GR:$rc, scale:$scale, indexed_disp:$imm),
+        !strconcat(OpcStr, ".ws\t$ra, $rb, $rc, $scale, $imm"), [], itin>;
 
   // base + scaled signed 32-bit index + displacement extended
   let mayLoad = 1, isIndexedMemAccess = 1, AddedComplexity = 3 in
   def rr_s32_ext : PRIMARY_MemIndexedLong<opRR, scale_opx_s32,
-                 (outs GR:$ra), (ins GR:$rb, GR:$rc, scale:$scale, indexed_disp_ext:$imm),
-                 !strconcat(OpcStr, ".ws.l\t$ra, $rb, $rc, $scale, $imm"),
-                 [], itin>;
+        (outs GR:$ra), (ins GR:$rb, GR:$rc, scale:$scale, indexed_disp_ext:$imm),
+        !strconcat(OpcStr, ".ws.l\t$ra, $rb, $rc, $scale, $imm"), [], itin>;
 
   // base + scaled unsigned 32-bit index + displacement
   let mayLoad = 1, isIndexedMemAccess = 1 in
   def rr_u32 : PRIMARY_MemIndexed<opRR, scale_opx_u32,
-                 (outs GR:$ra), (ins GR:$rb, GR:$rc, scale:$scale, indexed_disp:$imm),
-                 !strconcat(OpcStr, ".wz\t$ra, $rb, $rc, $scale, $imm"),
-                 [], itin>;
+        (outs GR:$ra), (ins GR:$rb, GR:$rc, scale:$scale, indexed_disp:$imm),
+        !strconcat(OpcStr, ".wz\t$ra, $rb, $rc, $scale, $imm"), [], itin>;
 
   // base + scaled unsigned 32-bit index + displacement extended
   let mayLoad = 1, isIndexedMemAccess = 1, AddedComplexity = 3 in
   def rr_u32_ext : PRIMARY_MemIndexedLong<opRR, scale_opx_u32,
-                 (outs GR:$ra), (ins GR:$rb, GR:$rc, scale:$scale, indexed_disp_ext:$imm),
-                 !strconcat(OpcStr, ".wz.l\t$ra, $rb, $rc, $scale, $imm"),
-                 [], itin>;
+        (outs GR:$ra), (ins GR:$rb, GR:$rc, scale:$scale, indexed_disp_ext:$imm),
+        !strconcat(OpcStr, ".wz.l\t$ra, $rb, $rc, $scale, $imm"), [], itin>;
 }
 
 defm LDBZ : LoadIndexed<opcode_ldbzx, "ldbzx">;
@@ -194,24 +175,20 @@ multiclass LdPatPCRel<PatFrag LoadOp, InstBase Inst, InstBaseExt Inst_ext, Value
 //===----------------------------------------------------------------------===//
 
 // base + scaled_index + disp
-def INDEXED_BSID :
-   PatFrag<(ops node:$base, node:$index, node:$scale, node:$offset),
-          (add (add node:$base, (shl node:$index, node:$scale)), node:$offset)>;
+def INDEXED_BSID : PatFrag<(ops node:$base, node:$index, node:$scale, node:$offset),
+     (add (add node:$base, (shl node:$index, node:$scale)), node:$offset)>;
 
 // base + index + disp (no scale)
-def INDEXED_BID :
-   PatFrag<(ops node:$base, node:$index, node:$offset),
-          (add (add node:$base, node:$index), node:$offset)>;
+def INDEXED_BID : PatFrag<(ops node:$base, node:$index, node:$offset),
+    (add (add node:$base, node:$index), node:$offset)>;
 
 // base + scaled_index (no disp)
-def INDEXED_BSI :
-   PatFrag<(ops node:$base, node:$index, node:$scale),
-          (add node:$base, (shl node:$index, node:$scale))>;
+def INDEXED_BSI : PatFrag<(ops node:$base, node:$index, node:$scale),
+    (add node:$base, (shl node:$index, node:$scale))>;
 
 // base + index (no dips, no scale)
-def INDEXED_BI :
-   PatFrag<(ops node:$base, node:$index),
-          (add node:$base, node:$index)>;
+def INDEXED_BI : PatFrag<(ops node:$base, node:$index),
+    (add node:$base, node:$index)>;
 
 //===----------------------------------------------------------------------===//
 // Indexed index patterns (sign/zero extend, etc)
@@ -223,212 +200,196 @@ def indexed_i64_sext  : PatFrag<(ops node:$index), (sext_inreg node:$index, i32)
 def indexed_i64_zext  : PatFrag<(ops node:$index), (i64 (zext (i32 (trunc node:$index))))>;
 def indexed_i64_trunc : PatFrag<(ops node:$index), (i64 (and node:$index, (i64 0xFFFFFFFF)))>;
 
-multiclass LdPatIndexed_i32<PatFrag LoadOp, PatFrag IndexOp,
-                 InstBase Inst, InstBaseExt instExt, ValueType Ty, ValueType IndexTy>
+multiclass LdPatIndexed_i32<PatFrag LoadOp, InstBase Inst, InstBaseExt instExt, ValueType Ty, ValueType IndexTy, PatFrag IndexOp>
 {
   // base + scaled_index + disp
-  def : Pat<(Ty (LoadOp
-            (INDEXED_BSID i64:$rb, (IndexOp IndexTy:$rc), scale:$scale, indexed_disp:$imm))),
+  def : Pat<(Ty (LoadOp (INDEXED_BSID i64:$rb, (IndexOp IndexTy:$rc), scale:$scale, indexed_disp:$imm))),
             (Inst GR:$rb, GR:$rc, scale:$scale, indexed_disp:$imm)>;
-  def : Pat<(Ty (LoadOp
-            (INDEXED_BSID i64:$rb, (IndexOp IndexTy:$rc), scale:$scale, indexed_disp_ext:$imm))),
+  def : Pat<(Ty (LoadOp (INDEXED_BSID i64:$rb, (IndexOp IndexTy:$rc), scale:$scale, indexed_disp_ext:$imm))),
             (instExt GR:$rb, GR:$rc, scale:$scale, indexed_disp_ext:$imm)>;
 
   // base + index + disp
-  def : Pat<(Ty (LoadOp
-            (INDEXED_BID i64:$rb, (IndexOp IndexTy:$rc), indexed_disp:$imm))),
+  def : Pat<(Ty (LoadOp (INDEXED_BID i64:$rb, (IndexOp IndexTy:$rc), indexed_disp:$imm))),
             (Inst GR:$rb, GR:$rc, 0, indexed_disp:$imm)>;
-  def : Pat<(Ty (LoadOp
-            (INDEXED_BID i64:$rb, (IndexOp IndexTy:$rc), indexed_disp_ext:$imm))),
+  def : Pat<(Ty (LoadOp (INDEXED_BID i64:$rb, (IndexOp IndexTy:$rc), indexed_disp_ext:$imm))),
             (instExt GR:$rb, GR:$rc, 0, indexed_disp_ext:$imm)>;
 
   // base + scaled_index (no extended variant)
-  def : Pat<(Ty (LoadOp
-            (INDEXED_BSI i64:$rb, (IndexOp IndexTy:$rc), scale:$scale))),
+  def : Pat<(Ty (LoadOp (INDEXED_BSI i64:$rb, (IndexOp IndexTy:$rc), scale:$scale))),
             (Inst GR:$rb, GR:$rc, scale:$scale, 0)>;
 
   // base + index (no extended variant)
-  def : Pat<(Ty (LoadOp
-            (INDEXED_BI i64:$rb, (IndexOp IndexTy:$rc)))),
+  def : Pat<(Ty (LoadOp (INDEXED_BI i64:$rb, (IndexOp IndexTy:$rc)))),
             (Inst GR:$rb, GR:$rc, 0, 0)>;
 }
 
-multiclass LdPatIndexed_i64<PatFrag LoadOp, InstBase Inst, InstBaseExt instExt, ValueType Ty>
+multiclass LdPatIndexed_i64<PatFrag LoadOp, InstBase Inst, InstBaseExt instExt, ValueType Ty, ValueType IndexTy>
 {
   // base + scaled_index + disp
-  def : Pat<(Ty (LoadOp
-            (INDEXED_BSID i64:$rb, i64:$rc, scale:$scale, indexed_disp:$imm))),
+  def : Pat<(Ty (LoadOp (INDEXED_BSID i64:$rb, IndexTy:$rc, scale:$scale, indexed_disp:$imm))),
             (Inst GR:$rb, GR:$rc, scale:$scale, indexed_disp:$imm)>;
-  def : Pat<(Ty (LoadOp
-            (INDEXED_BSID i64:$rb, i64:$rc, scale:$scale, indexed_disp_ext:$imm))),
+  def : Pat<(Ty (LoadOp (INDEXED_BSID i64:$rb, IndexTy:$rc, scale:$scale, indexed_disp_ext:$imm))),
             (instExt GR:$rb, GR:$rc, scale:$scale, indexed_disp_ext:$imm)>;
 
   // base + index + disp
-  def : Pat<(Ty (LoadOp
-            (INDEXED_BID i64:$rb, i64:$rc, indexed_disp:$imm))),
+  def : Pat<(Ty (LoadOp (INDEXED_BID i64:$rb, IndexTy:$rc, indexed_disp:$imm))),
             (Inst GR:$rb, GR:$rc, 0, indexed_disp:$imm)>;
-  def : Pat<(Ty (LoadOp
-            (INDEXED_BID i64:$rb, i64:$rc, indexed_disp_ext:$imm))),
+  def : Pat<(Ty (LoadOp (INDEXED_BID i64:$rb, IndexTy:$rc, indexed_disp_ext:$imm))),
             (instExt GR:$rb, GR:$rc, 0, indexed_disp_ext:$imm)>;
 
   // base + scaled_index (no extended variant)
-  def : Pat<(Ty (LoadOp
-            (INDEXED_BSI i64:$rb, i64:$rc, scale:$scale))),
+  def : Pat<(Ty (LoadOp (INDEXED_BSI i64:$rb, IndexTy:$rc, scale:$scale))),
             (Inst GR:$rb, GR:$rc, scale:$scale, 0)>;
 
   // base + index (no extended variant)
-  def : Pat<(Ty (LoadOp
-            (INDEXED_BI i64:$rb, i64:$rc))),
+  def : Pat<(Ty (LoadOp (INDEXED_BI i64:$rb, IndexTy:$rc))),
             (Inst GR:$rb, GR:$rc, 0, 0)>;
 }
 
-multiclass LdPat<string INSTNAME, PatFrag LoadOp, ValueType Ty>
+multiclass LdPat<PatFrag LoadOp, ValueType Ty>
 {
-  defm : LdPatBase       <LoadOp, !cast<InstBase>(INSTNAME # "ri"),     !cast<InstBaseExt>(INSTNAME # "ri_ext"    ), Ty>;
-  defm : LdPatPCRel      <LoadOp, !cast<InstBase>(INSTNAME # "rc"),     !cast<InstBaseExt>(INSTNAME # "rc_ext"    ), Ty>;
-  defm : LdPatIndexed_i64<LoadOp, !cast<InstBase>(INSTNAME # "rr_s64"), !cast<InstBaseExt>(INSTNAME # "rr_s64_ext"), Ty>;
-  defm : LdPatIndexed_i32<LoadOp, indexed_i32_sext,  !cast<InstBase>(INSTNAME # "rr_s32"), !cast<InstBaseExt>(INSTNAME # "rr_s32_ext"), Ty, i32>;
-  defm : LdPatIndexed_i32<LoadOp, indexed_i32_zext,  !cast<InstBase>(INSTNAME # "rr_u32"), !cast<InstBaseExt>(INSTNAME # "rr_u32_ext"), Ty, i32>;
-  defm : LdPatIndexed_i32<LoadOp, indexed_i64_sext,  !cast<InstBase>(INSTNAME # "rr_s32"), !cast<InstBaseExt>(INSTNAME # "rr_s32_ext"), Ty, i64>;
-  defm : LdPatIndexed_i32<LoadOp, indexed_i64_zext,  !cast<InstBase>(INSTNAME # "rr_u32"), !cast<InstBaseExt>(INSTNAME # "rr_u32_ext"), Ty, i64>;
-  defm : LdPatIndexed_i32<LoadOp, indexed_i64_trunc, !cast<InstBase>(INSTNAME # "rr_u32"), !cast<InstBaseExt>(INSTNAME # "rr_u32_ext"), Ty, i64>;
+  defm : LdPatBase       <LoadOp, !cast<InstBase>(NAME # ri    ), !cast<InstBaseExt>(NAME # ri_ext    ), Ty>;
+  defm : LdPatPCRel      <LoadOp, !cast<InstBase>(NAME # rc    ), !cast<InstBaseExt>(NAME # rc_ext    ), Ty>;
+  defm : LdPatIndexed_i64<LoadOp, !cast<InstBase>(NAME # rr_s64), !cast<InstBaseExt>(NAME # rr_s64_ext), Ty, i64>;
+  defm : LdPatIndexed_i32<LoadOp, !cast<InstBase>(NAME # rr_s32), !cast<InstBaseExt>(NAME # rr_s32_ext), Ty, i32, indexed_i32_sext>;
+  defm : LdPatIndexed_i32<LoadOp, !cast<InstBase>(NAME # rr_u32), !cast<InstBaseExt>(NAME # rr_u32_ext), Ty, i32, indexed_i32_zext>;
+  defm : LdPatIndexed_i32<LoadOp, !cast<InstBase>(NAME # rr_s32), !cast<InstBaseExt>(NAME # rr_s32_ext), Ty, i64, indexed_i64_sext>;
+  defm : LdPatIndexed_i32<LoadOp, !cast<InstBase>(NAME # rr_u32), !cast<InstBaseExt>(NAME # rr_u32_ext), Ty, i64, indexed_i64_zext>;
+  defm : LdPatIndexed_i32<LoadOp, !cast<InstBase>(NAME # rr_u32), !cast<InstBaseExt>(NAME # rr_u32_ext), Ty, i64, indexed_i64_trunc>;
 }
 
-defm : LdPat<"LDBZ", load,        i1>;
-defm : LdPat<"LDBZ", zextloadi1,  i32>;
-defm : LdPat<"LDBZ", extloadi1,   i32>;
-defm : LdPat<"LDBZ", zextloadi1,  i64>;
-defm : LdPat<"LDBZ", extloadi1,   i64>;
-defm : LdPat<"LDBZ", zextloadi8,  i32>;
-defm : LdPat<"LDBZ", extloadi8,   i32>;
-defm : LdPat<"LDBZ", zextloadi8,  i64>;
-defm : LdPat<"LDBZ", extloadi8,   i64>;
-defm : LdPat<"LDBZ", zextloadi8,  i128>;
+defm LDBZ : LdPat<load,        i1>;
+defm LDBZ : LdPat<zextloadi1,  i32>;
+defm LDBZ : LdPat<extloadi1,   i32>;
+defm LDBZ : LdPat<zextloadi1,  i64>;
+defm LDBZ : LdPat<extloadi1,   i64>;
+defm LDBZ : LdPat<zextloadi1,  i128>;
+defm LDBZ : LdPat<extloadi1,   i128>;
+defm LDBZ : LdPat<zextloadi8,  i32>;
+defm LDBZ : LdPat<extloadi8,   i32>;
+defm LDBZ : LdPat<zextloadi8,  i64>;
+defm LDBZ : LdPat<extloadi8,   i64>;
+defm LDBZ : LdPat<zextloadi8,  i128>;
+defm LDBZ : LdPat<extloadi8,   i128>;
 
-defm : LdPat<"LDBS", sextloadi8,  i32>;
-defm : LdPat<"LDBS", sextloadi8,  i64>;
+defm LDBS : LdPat<sextloadi8,  i32>;
+defm LDBS : LdPat<sextloadi8,  i64>;
+defm LDBS : LdPat<sextloadi8,  i128>;
 
-defm : LdPat<"LDHZ", zextloadi16, i32>;
-defm : LdPat<"LDHZ", extloadi16,  i32>;
-defm : LdPat<"LDHZ", zextloadi16, i64>;
-defm : LdPat<"LDHZ", extloadi16,  i64>;
-defm : LdPat<"LDHZ", zextloadi16, i128>;
+defm LDHZ : LdPat<zextloadi16, i32>;
+defm LDHZ : LdPat<extloadi16,  i32>;
+defm LDHZ : LdPat<zextloadi16, i64>;
+defm LDHZ : LdPat<extloadi16,  i64>;
+defm LDHZ : LdPat<zextloadi16, i128>;
+defm LDHZ : LdPat<extloadi16,  i128>;
 
-defm : LdPat<"LDHS", sextloadi16, i32>;
-defm : LdPat<"LDHS", sextloadi16, i64>;
+defm LDHS : LdPat<sextloadi16, i32>;
+defm LDHS : LdPat<sextloadi16, i64>;
+defm LDHS : LdPat<sextloadi16, i128>;
 
-defm : LdPat<"LDWZ", load,        i32>;
-defm : LdPat<"LDWZ", zextloadi32, i64>;
-defm : LdPat<"LDWZ", extloadi32,  i64>;
-defm : LdPat<"LDWZ", zextloadi32, i128>;
+defm LDWZ : LdPat<load,        i32>;
+defm LDWZ : LdPat<zextloadi32, i64>;
+defm LDWZ : LdPat<extloadi32,  i64>;
+defm LDWZ : LdPat<zextloadi32, i128>;
+defm LDWZ : LdPat<extloadi32,  i128>;
 
-defm : LdPat<"LDWS", sextloadi32, i64>;
+defm LDWS : LdPat<sextloadi32, i64>;
+defm LDWS : LdPat<sextloadi32, i128>;
 
-defm : LdPat<"LDDZ", load,        i64>;
-defm : LdPat<"LDDZ", zextloadi64, i128>;
+defm LDDZ : LdPat<load,        i64>;
+defm LDDZ : LdPat<extloadi64,  i128>;
+defm LDDZ : LdPat<zextloadi64, i128>;
 
-defm : LdPat<"LDQ",  load,        i128>;
+defm LDQ  : LdPat<load, i128>;
+
+defm LDHZ : LdPat<load, f16>;
+defm LDWZ : LdPat<load, f32>;
+defm LDDZ : LdPat<load, f64>;
+defm LDQ  : LdPat<load, f128>;
+
+defm LDQ : LdPat<load, v2f64>;
+defm LDQ : LdPat<load, v4f32>;
+defm LDQ : LdPat<load, v8f16>;
+defm LDQ : LdPat<load, v16i8>;
+defm LDQ : LdPat<load, v8i16>;
+defm LDQ : LdPat<load, v4i32>;
+defm LDQ : LdPat<load, v2i64>;
 
 //===----------------------------------------------------------------------===//
 // Store instructions (base+dsip, ip+disp, pre/post update, indexed)
 //===----------------------------------------------------------------------===//
-multiclass Store<opcode_opx opRR, opcode_opx opRI, opcode_opx opRC,
-      misc_opx opMIA, misc_opx opMIB,
-      string OpcStr, InstrItinClass itin = IIC_st>
+multiclass Store<opcode_opx opRR, opcode_opx opRI, opcode_opx opRC, misc_opx opMIA,
+  misc_opx opMIB, string OpcStr, InstrItinClass itin = IIC_st>
 {
   // base + displacement
   let mayStore = 1 in
-  def ri       : PRIMARY_RabI21<opRI,
-                 (outs), (ins GR:$ra, GR:$rb, simm21:$imm),
-                 !strconcat(OpcStr, "\t$ra, $rb, $imm"),
-                 [], itin>;
+  def ri : PRIMARY_RabI21<opRI, (outs), (ins GR:$ra, GR:$rb, simm21:$imm),
+        !strconcat(OpcStr, "\t$ra, $rb, $imm"), [], itin>;
 
   // base + displacement extended
   let mayStore = 1, AddedComplexity = 3 in
-  def ri_ext  : PRIMARY_RabI21_ext<opRI,
-                 (outs), (ins GR:$ra, GR:$rb, simm21_ext:$imm),
-                 !strconcat(OpcStr, ".l\t$ra, $rb, $imm"),
-                 [], itin>;
+  def ri_ext : PRIMARY_RabI21_ext<opRI, (outs), (ins GR:$ra, GR:$rb, simm21_ext:$imm),
+        !strconcat(OpcStr, ".l\t$ra, $rb, $imm"), [], itin>;
 
   // ip + forward displacement
   let mayStore = 1 in
-  def rc       : PRIMARY_RaI28<opRC,
-                 (outs), (ins GR:$ra, simm28:$imm),
-                 !strconcat(OpcStr, "r\t$ra, $imm"),
-                 [], itin>;
+  def rc : PRIMARY_RaI28<opRC, (outs), (ins GR:$ra, simm28:$imm),
+        !strconcat(OpcStr, "r\t$ra, $imm"), [], itin>;
 
   // ip + forward displacement extended
   let mayStore = 1, AddedComplexity = 3 in
-  def rc_ext  : PRIMARY_RaI28_ext<opRC,
-                 (outs), (ins GR:$ra, simm28_ext:$imm),
-                 !strconcat(OpcStr, "r.l\t$ra, $imm"),
-                 [], itin>;
+  def rc_ext : PRIMARY_RaI28_ext<opRC, (outs), (ins GR:$ra, simm28_ext:$imm),
+        !strconcat(OpcStr, "r.l\t$ra, $imm"), [], itin>;
 
   // base + scaled 64-bit index + displacement
   let mayStore = 1, isIndexedMemAccess = 1 in
-  def rr_s64 : PRIMARY_MemIndexed<opRR, scale_opx_s64,
-                 (outs), (ins GR:$ra, GR:$rb, GR:$rc, scale:$scale, indexed_disp:$imm),
-                 !strconcat(OpcStr, "x\t$ra, $rb, $rc, $scale, $imm"),
-                 [], itin>;
+  def rr_s64 : PRIMARY_MemIndexed<opRR, scale_opx_s64, (outs), (ins GR:$ra, GR:$rb, GR:$rc, scale:$scale, indexed_disp:$imm),
+        !strconcat(OpcStr, "x\t$ra, $rb, $rc, $scale, $imm"), [], itin>;
 
   // base + scaled 64-bit index + displacement extended
   let mayStore = 1, isIndexedMemAccess = 1, AddedComplexity = 3 in
-  def rr_s64_ext  : PRIMARY_MemIndexedLong<opRR, scale_opx_s64,
-                 (outs), (ins GR:$ra, GR:$rb, GR:$rc, scale:$scale, indexed_disp_ext:$imm),
-                 !strconcat(OpcStr, "x.l\t$ra, $rb, $rc, $scale, $imm"),
-                 [], itin>;
+  def rr_s64_ext : PRIMARY_MemIndexedLong<opRR, scale_opx_s64, (outs), (ins GR:$ra, GR:$rb, GR:$rc, scale:$scale, indexed_disp_ext:$imm),
+        !strconcat(OpcStr, "x.l\t$ra, $rb, $rc, $scale, $imm"), [], itin>;
 
   // base + scaled signed 32-bit index + displacement
   let mayStore = 1, isIndexedMemAccess = 1 in
-  def rr_s32  : PRIMARY_MemIndexed<opRR, scale_opx_s32,
-                 (outs), (ins GR:$ra, GR:$rb, GR:$rc, scale:$scale, indexed_disp:$imm),
-                 !strconcat(OpcStr, "x.ws\t$ra, $rb, $rc, $scale, $imm"),
-                 [], itin>;
+  def rr_s32 : PRIMARY_MemIndexed<opRR, scale_opx_s32, (outs), (ins GR:$ra, GR:$rb, GR:$rc, scale:$scale, indexed_disp:$imm),
+        !strconcat(OpcStr, "x.ws\t$ra, $rb, $rc, $scale, $imm"), [], itin>;
 
   // base + scaled signed 32-bit index + displacement extended
   let mayStore = 1, isIndexedMemAccess = 1, AddedComplexity = 3 in
-  def rr_s32_ext : PRIMARY_MemIndexedLong<opRR, scale_opx_s32,
-                 (outs), (ins GR:$ra, GR:$rb, GR:$rc, scale:$scale, indexed_disp_ext:$imm),
-                 !strconcat(OpcStr, "x.ws.l\t$ra, $rb, $rc, $scale, $imm"),
-                 [], itin>;
+  def rr_s32_ext : PRIMARY_MemIndexedLong<opRR, scale_opx_s32, (outs), (ins GR:$ra, GR:$rb, GR:$rc, scale:$scale, indexed_disp_ext:$imm),
+        !strconcat(OpcStr, "x.ws.l\t$ra, $rb, $rc, $scale, $imm"), [], itin>;
 
   // base + scaled unsigned 32-bit index + displacement
   let mayStore = 1, isIndexedMemAccess = 1 in
-  def rr_u32  : PRIMARY_MemIndexed<opRR, scale_opx_u32,
-                 (outs), (ins GR:$ra, GR:$rb, GR:$rc, scale:$scale, indexed_disp:$imm),
-                 !strconcat(OpcStr, "x.wz\t$ra, $rb, $rc, $scale, $imm"),
-                 [], itin>;
+  def rr_u32 : PRIMARY_MemIndexed<opRR, scale_opx_u32, (outs), (ins GR:$ra, GR:$rb, GR:$rc, scale:$scale, indexed_disp:$imm),
+        !strconcat(OpcStr, "x.wz\t$ra, $rb, $rc, $scale, $imm"), [], itin>;
 
   // base + scaled unsigned 32-bit index + displacement extended
   let mayStore = 1, isIndexedMemAccess = 1, AddedComplexity = 3 in
-  def rr_u32_ext : PRIMARY_MemIndexedLong<opRR, scale_opx_u32,
-                 (outs), (ins GR:$ra, GR:$rb, GR:$rc, scale:$scale, indexed_disp_ext:$imm),
-                 !strconcat(OpcStr, "x.wz.l\t$ra, $rb, $rc, $scale, $imm"),
-                 [], itin>;
+  def rr_u32_ext : PRIMARY_MemIndexedLong<opRR, scale_opx_u32, (outs), (ins GR:$ra, GR:$rb, GR:$rc, scale:$scale, indexed_disp_ext:$imm),
+        !strconcat(OpcStr, "x.wz.l\t$ra, $rb, $rc, $scale, $imm"), [], itin>;
 
   // base with base post-update immediate
-  let mayStore = 1, isPostIncrement = 1 in
-  def mia : MISC_RabI10<opMIA,
-                   (outs), (ins GR:$ra, GR:$rb, stride_imm:$imm),
-                   !strconcat(OpcStr, "mia\t$ra, $rb, $imm"), [], itin>;
+  let mayStore = 1, isPostIncrement = 1, Constraints = "$rx = $rb" in
+  def mia : MISC_RabI10<opMIA, (outs GR:$rx), (ins GR:$ra, GR:$rb, stride_imm:$imm),
+        !strconcat(OpcStr, "mia\t$ra, $rb, $imm"), [], itin>;
 
   // base with base post-update immediate (extended)
-  let mayStore = 1, isPostIncrement = 1 in
-  def mia_ext : MISC_RabI10_ext<opMIA,
-                   (outs), (ins GR:$ra, GR:$rb, stride_imm_ext:$imm),
-                   !strconcat(OpcStr, "mia.l\t$ra, $rb, $imm"), [], itin>;
+  let mayStore = 1, isPostIncrement = 1, AddedComplexity = 3, Constraints = "$rx = $rb" in
+  def mia_ext : MISC_RabI10_ext<opMIA, (outs GR:$rx), (ins GR:$ra, GR:$rb, stride_imm_ext:$imm),
+        !strconcat(OpcStr, "mia.l\t$ra, $rb, $imm"), [], itin>;
 
   // base with base pre-update immediate
-  let mayStore = 1, isPreIncrement = 1 in
-  def mib : MISC_RabI10<opMIB,
-                   (outs), (ins GR:$ra, GR:$rb, stride_imm:$imm),
-                   !strconcat(OpcStr, "mib\t$ra, $rb, $imm"), [], itin>;
+  let mayStore = 1, isPreIncrement = 1, Constraints = "$rx = $rb" in
+  def mib : MISC_RabI10<opMIB, (outs GR:$rx), (ins GR:$ra, GR:$rb, stride_imm:$imm),
+        !strconcat(OpcStr, "mib\t$ra, $rb, $imm"), [], itin>;
 
   // base with base pre-update immediate (extended)
-  let mayStore = 1, isPreIncrement = 1 in
-  def mib_ext : MISC_RabI10_ext<opMIB,
-                   (outs), (ins GR:$ra, GR:$rb, stride_imm_ext:$imm),
-                   !strconcat(OpcStr, "mib.l\t$ra, $rb, $imm"), [], itin>;
+  let mayStore = 1, isPreIncrement = 1, AddedComplexity = 3, Constraints = "$rx = $rb" in
+  def mib_ext : MISC_RabI10_ext<opMIB, (outs GR:$rx), (ins GR:$ra, GR:$rb, stride_imm_ext:$imm),
+        !strconcat(OpcStr, "mib.l\t$ra, $rb, $imm"), [], itin>;
 }
 
 defm STB : Store<opcode_stbx, opcode_stb, opcode_stbr, misc_opx_stbmia, misc_opx_stbmib, "stb">;
@@ -443,20 +404,20 @@ defm STQ : Store<opcode_stqx, opcode_stq, opcode_stqr, misc_opx_stqmia, misc_opx
 multiclass StPatBase<PatFrag StoreOp, InstBase Inst, InstBaseExt instExt, ValueType Ty>
 {
   def : Pat<(StoreOp Ty:$ra, (add i64:$rb, simm21:$imm)),
-            (Inst    GR:$ra, GR:$rb, simm21:$imm)>;
+            (Inst GR:$ra, GR:$rb, simm21:$imm)>;
   def : Pat<(StoreOp Ty:$ra, (add (i64 AddrFI:$rb), simm21:$imm)),
-            (Inst    GR:$ra, AddrFI:$rb, simm21:$imm)>;
+            (Inst GR:$ra, AddrFI:$rb, simm21:$imm)>;
   def : Pat<(StoreOp Ty:$ra, i64:$rb),
-            (Inst    GR:$ra, GR:$rb, 0)>;
+            (Inst GR:$ra, GR:$rb, 0)>;
   def : Pat<(StoreOp Ty:$ra, (i64 AddrFI:$rb)),
-            (Inst    GR:$ra, AddrFI:$rb, 0)>;
+            (Inst GR:$ra, AddrFI:$rb, 0)>;
   def : Pat<(StoreOp Ty:$ra, (add i64:$rb , simm21_ext:$imm)),
             (instExt GR:$ra, GR:$rb, simm21_ext:$imm)>;
   def : Pat<(StoreOp Ty:$ra, (add (i64 AddrFI:$rb), simm21_ext:$imm)),
             (instExt GR:$ra, AddrFI:$rb, simm21_ext:$imm)>;
 
   def : Pat<(StoreOp Ty:$ra, (add i64:$rb, (tls_offset_wrapper tglobaltlsaddr:$addr))),
-            (Inst    GR:$ra, GR:$rb, tglobaltlsaddr:$addr)>;
+            (Inst GR:$ra, GR:$rb, tglobaltlsaddr:$addr)>;
   def : Pat<(StoreOp Ty:$ra, (add i64:$rb, (tls_offset_wrapper_ext tglobaltlsaddr:$addr))),
             (instExt GR:$ra, GR:$rb, tglobaltlsaddr:$addr)>;
 }
@@ -476,15 +437,21 @@ multiclass StPatPCRel<PatFrag StoreOp, InstBase Inst, InstBaseExt Inst_ext, Valu
 multiclass StPatIndexed_i32<PatFrag StoreOp, InstBase Inst, InstBaseExt InstExt, ValueType Ty, ValueType IndexTy, PatFrag IndexOp>
 {
   // base + scaled_index + disp
-  def : Pat<(StoreOp Ty:$ra, (INDEXED_BSID i64:$rb, (IndexOp IndexTy:$rc), scale:$scale, indexed_disp:    $imm)), (Inst    GR:$ra, GR:$rb, GR:$rc, scale:$scale, indexed_disp:    $imm)>;
-  def : Pat<(StoreOp Ty:$ra, (INDEXED_BSID i64:$rb, (IndexOp IndexTy:$rc), scale:$scale, indexed_disp_ext:$imm)), (InstExt GR:$ra, GR:$rb, GR:$rc, scale:$scale, indexed_disp_ext:$imm)>;
+  def : Pat<(StoreOp Ty:$ra, (INDEXED_BSID i64:$rb, (IndexOp IndexTy:$rc), scale:$scale, indexed_disp:$imm)),
+            (Inst GR:$ra, GR:$rb, GR:$rc, scale:$scale, indexed_disp:$imm)>;
+  def : Pat<(StoreOp Ty:$ra, (INDEXED_BSID i64:$rb, (IndexOp IndexTy:$rc), scale:$scale, indexed_disp_ext:$imm)),
+            (InstExt GR:$ra, GR:$rb, GR:$rc, scale:$scale, indexed_disp_ext:$imm)>;
   // base + index + disp
-  def : Pat<(StoreOp Ty:$ra, (INDEXED_BID i64:$rb, (IndexOp IndexTy:$rc), indexed_disp:    $imm)), (Inst    GR:$ra, GR:$rb, GR:$rc, 0, indexed_disp:    $imm)>;
-  def : Pat<(StoreOp Ty:$ra, (INDEXED_BID i64:$rb, (IndexOp IndexTy:$rc), indexed_disp_ext:$imm)), (InstExt GR:$ra, GR:$rb, GR:$rc, 0, indexed_disp_ext:$imm)>;
+  def : Pat<(StoreOp Ty:$ra, (INDEXED_BID i64:$rb, (IndexOp IndexTy:$rc), indexed_disp:$imm)),
+            (Inst GR:$ra, GR:$rb, GR:$rc, 0, indexed_disp:$imm)>;
+  def : Pat<(StoreOp Ty:$ra, (INDEXED_BID i64:$rb, (IndexOp IndexTy:$rc), indexed_disp_ext:$imm)),
+            (InstExt GR:$ra, GR:$rb, GR:$rc, 0, indexed_disp_ext:$imm)>;
   // base + scaled_index (no extended variant)
-  def : Pat<(StoreOp Ty:$ra, (INDEXED_BSI i64:$rb, (IndexOp IndexTy:$rc), scale:$scale)), (Inst GR:$ra, GR:$rb, GR:$rc, scale:$scale, 0)>;
+  def : Pat<(StoreOp Ty:$ra, (INDEXED_BSI i64:$rb, (IndexOp IndexTy:$rc), scale:$scale)),
+            (Inst GR:$ra, GR:$rb, GR:$rc, scale:$scale, 0)>;
   // base + index (no extended variant)
-  def : Pat<(StoreOp Ty:$ra, (INDEXED_BI i64:$rb, (IndexOp IndexTy:$rc))), (Inst GR:$ra, GR:$rb, GR:$rc, 0, 0)>;
+  def : Pat<(StoreOp Ty:$ra, (INDEXED_BI i64:$rb, (IndexOp IndexTy:$rc))),
+            (Inst GR:$ra, GR:$rb, GR:$rc, 0, 0)>;
 }
 
 multiclass StPatIndexed_i64<PatFrag StoreOp, InstBase Inst, InstBaseExt InstExt, ValueType Ty, ValueType IndexTy>
@@ -501,34 +468,47 @@ multiclass StPatIndexed_i64<PatFrag StoreOp, InstBase Inst, InstBaseExt InstExt,
   def : Pat<(StoreOp Ty:$ra, (INDEXED_BI i64:$rb, IndexTy:$rc)), (Inst GR:$ra, GR:$rb, GR:$rc, 0, 0)>;
 }
 
-multiclass StPat<string INSTNAME, PatFrag StoreOp, ValueType Ty>
+multiclass StPat<PatFrag StoreOp, ValueType Ty>
 {
-  defm : StPatBase        <StoreOp, !cast<InstBase>(INSTNAME # "ri"),     !cast<InstBaseExt>(INSTNAME # "ri_ext"    ), Ty>;
-  defm : StPatPCRel       <StoreOp, !cast<InstBase>(INSTNAME # "rc"),     !cast<InstBaseExt>(INSTNAME # "rc_ext"    ), Ty>;
-  defm : StPatIndexed_i64 <StoreOp, !cast<InstBase>(INSTNAME # "rr_s64"), !cast<InstBaseExt>(INSTNAME # "rr_s64_ext"), Ty, i64>;
-  defm : StPatIndexed_i32 <StoreOp, !cast<InstBase>(INSTNAME # "rr_s32"), !cast<InstBaseExt>(INSTNAME # "rr_s32_ext"), Ty, i32, indexed_i32_sext>;
-  defm : StPatIndexed_i32 <StoreOp, !cast<InstBase>(INSTNAME # "rr_u32"), !cast<InstBaseExt>(INSTNAME # "rr_u32_ext"), Ty, i32, indexed_i32_zext>;
-  defm : StPatIndexed_i32 <StoreOp, !cast<InstBase>(INSTNAME # "rr_s32"), !cast<InstBaseExt>(INSTNAME # "rr_s32_ext"), Ty, i64, indexed_i64_sext>;
-  defm : StPatIndexed_i32 <StoreOp, !cast<InstBase>(INSTNAME # "rr_u32"), !cast<InstBaseExt>(INSTNAME # "rr_u32_ext"), Ty, i64, indexed_i64_zext>;
-  defm : StPatIndexed_i32 <StoreOp, !cast<InstBase>(INSTNAME # "rr_u32"), !cast<InstBaseExt>(INSTNAME # "rr_u32_ext"), Ty, i64, indexed_i64_trunc>;
+  defm : StPatBase        <StoreOp, !cast<InstBase>(NAME # ri    ), !cast<InstBaseExt>(NAME # ri_ext    ), Ty>;
+  defm : StPatPCRel       <StoreOp, !cast<InstBase>(NAME # rc    ), !cast<InstBaseExt>(NAME # rc_ext    ), Ty>;
+  defm : StPatIndexed_i64 <StoreOp, !cast<InstBase>(NAME # rr_s64), !cast<InstBaseExt>(NAME # rr_s64_ext), Ty, i64>;
+  defm : StPatIndexed_i32 <StoreOp, !cast<InstBase>(NAME # rr_s32), !cast<InstBaseExt>(NAME # rr_s32_ext), Ty, i32, indexed_i32_sext>;
+  defm : StPatIndexed_i32 <StoreOp, !cast<InstBase>(NAME # rr_u32), !cast<InstBaseExt>(NAME # rr_u32_ext), Ty, i32, indexed_i32_zext>;
+  defm : StPatIndexed_i32 <StoreOp, !cast<InstBase>(NAME # rr_s32), !cast<InstBaseExt>(NAME # rr_s32_ext), Ty, i64, indexed_i64_sext>;
+  defm : StPatIndexed_i32 <StoreOp, !cast<InstBase>(NAME # rr_u32), !cast<InstBaseExt>(NAME # rr_u32_ext), Ty, i64, indexed_i64_zext>;
+  defm : StPatIndexed_i32 <StoreOp, !cast<InstBase>(NAME # rr_u32), !cast<InstBaseExt>(NAME # rr_u32_ext), Ty, i64, indexed_i64_trunc>;
 }
 
 // TODO: patterns for stXmia/stXmib
 
-defm : StPat<"STB", store,         i1>;
-defm : StPat<"STB", truncstorei8,  i32>;
-defm : StPat<"STB", truncstorei8,  i64>;
-defm : StPat<"STB", truncstorei8,  i128>;
-defm : StPat<"STH", truncstorei16, i1>;
-defm : StPat<"STH", truncstorei16, i32>;
-defm : StPat<"STH", truncstorei16, i64>;
-defm : StPat<"STH", truncstorei16, i128>;
-defm : StPat<"STW", store,         i32>;
-defm : StPat<"STW", truncstorei32, i64>;
-defm : StPat<"STW", truncstorei32, i128>;
-defm : StPat<"STD", store,         i64>;
-defm : StPat<"STD", truncstorei64, i128>;
-defm : StPat<"STQ", store,         i128>;
+defm STB : StPat<store,         i1>;
+defm STB : StPat<truncstorei8,  i32>;
+defm STB : StPat<truncstorei8,  i64>;
+defm STB : StPat<truncstorei8,  i128>;
+defm STH : StPat<truncstorei16, i1>;
+defm STH : StPat<truncstorei16, i32>;
+defm STH : StPat<truncstorei16, i64>;
+defm STH : StPat<truncstorei16, i128>;
+defm STW : StPat<store,         i32>;
+defm STW : StPat<truncstorei32, i64>;
+defm STW : StPat<truncstorei32, i128>;
+defm STD : StPat<store,         i64>;
+defm STD : StPat<truncstorei64, i128>;
+defm STQ : StPat<store,         i128>;
+
+defm STH : StPat<store, f16>;
+defm STW : StPat<store, f32>;
+defm STD : StPat<store, f64>;
+defm STQ : StPat<store, f128>;
+
+defm STQ : StPat<store, v8f16>;
+defm STQ : StPat<store, v4f32>;
+defm STQ : StPat<store, v2f64>;
+defm STQ : StPat<store, v16i8>;
+defm STQ : StPat<store, v8i16>;
+defm STQ : StPat<store, v4i32>;
+defm STQ : StPat<store, v2i64>;
 
 //===----------------------------------------------------------------------===//
 // LDAX patterns (sign/zero extend, etc)
@@ -537,8 +517,10 @@ defm : StPat<"STQ", store,         i128>;
 multiclass LdaxPatIndexed_i32<InstBase Inst, InstBaseExt instExt, ValueType IndexTy, PatFrag IndexOp>
 {
   // base + scaled_index + disp
-  def : Pat<(INDEXED_BSID i64:$rb, (IndexOp IndexTy:$rc), scale:$scale, indexed_disp:    $imm), (Inst    GR:$rb, GR:$rc, scale:$scale, indexed_disp:    $imm)>;
-  def : Pat<(INDEXED_BSID i64:$rb, (IndexOp IndexTy:$rc), scale:$scale, indexed_disp_ext:$imm), (instExt GR:$rb, GR:$rc, scale:$scale, indexed_disp_ext:$imm)>;
+  def : Pat<(INDEXED_BSID i64:$rb, (IndexOp IndexTy:$rc), scale:$scale, indexed_disp:$imm),
+            (Inst GR:$rb, GR:$rc, scale:$scale, indexed_disp:$imm)>;
+  def : Pat<(INDEXED_BSID i64:$rb, (IndexOp IndexTy:$rc), scale:$scale, indexed_disp_ext:$imm),
+            (instExt GR:$rb, GR:$rc, scale:$scale, indexed_disp_ext:$imm)>;
 
   // base + index + disp
   def : Pat<(INDEXED_BID i64:$rb, (IndexOp IndexTy:$rc), indexed_disp:$imm),
@@ -569,15 +551,15 @@ multiclass LdaxPatIndexed_i64<InstBase Inst, InstBaseExt instExt, ValueType Inde
   def : Pat<(INDEXED_BI i64:$rb, IndexTy:$rc), (Inst GR:$rb, GR:$rc, 0, 0)>;
 }
 
-multiclass LdaxPat<string INSTNAME>
+multiclass LdaxPat
 {
-  defm : LdaxPatIndexed_i64 <!cast<InstBase>(INSTNAME # "rr_s64"), !cast<InstBaseExt>(INSTNAME # "rr_s64_ext"), i64>;
-  defm : LdaxPatIndexed_i32 <!cast<InstBase>(INSTNAME # "rr_s32"), !cast<InstBaseExt>(INSTNAME # "rr_s32_ext"), i32, indexed_i32_sext>;
-  defm : LdaxPatIndexed_i32 <!cast<InstBase>(INSTNAME # "rr_u32"), !cast<InstBaseExt>(INSTNAME # "rr_u32_ext"), i32, indexed_i32_zext>;
-  defm : LdaxPatIndexed_i32 <!cast<InstBase>(INSTNAME # "rr_s32"), !cast<InstBaseExt>(INSTNAME # "rr_s32_ext"), i64, indexed_i64_sext>;
-  defm : LdaxPatIndexed_i32 <!cast<InstBase>(INSTNAME # "rr_u32"), !cast<InstBaseExt>(INSTNAME # "rr_u32_ext"), i64, indexed_i64_zext>;
-  defm : LdaxPatIndexed_i32 <!cast<InstBase>(INSTNAME # "rr_u32"), !cast<InstBaseExt>(INSTNAME # "rr_u32_ext"), i64, indexed_i64_trunc>;
+  defm : LdaxPatIndexed_i64 <!cast<InstBase>(NAME # rr_s64), !cast<InstBaseExt>(NAME # rr_s64_ext), i64>;
+  defm : LdaxPatIndexed_i32 <!cast<InstBase>(NAME # rr_s32), !cast<InstBaseExt>(NAME # rr_s32_ext), i32, indexed_i32_sext>;
+  defm : LdaxPatIndexed_i32 <!cast<InstBase>(NAME # rr_u32), !cast<InstBaseExt>(NAME # rr_u32_ext), i32, indexed_i32_zext>;
+  defm : LdaxPatIndexed_i32 <!cast<InstBase>(NAME # rr_s32), !cast<InstBaseExt>(NAME # rr_s32_ext), i64, indexed_i64_sext>;
+  defm : LdaxPatIndexed_i32 <!cast<InstBase>(NAME # rr_u32), !cast<InstBaseExt>(NAME # rr_u32_ext), i64, indexed_i64_zext>;
+  defm : LdaxPatIndexed_i32 <!cast<InstBase>(NAME # rr_u32), !cast<InstBaseExt>(NAME # rr_u32_ext), i64, indexed_i64_trunc>;
 }
 
 defm LDAX : LoadIndexed<opcode_ldax,  "ldax">;
-defm : LdaxPat<"LDAX">;
+defm LDAX : LdaxPat;

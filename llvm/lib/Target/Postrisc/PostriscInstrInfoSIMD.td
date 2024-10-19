@@ -60,28 +60,6 @@ def : Pat<(f32 (bitconvert v4f32:$val)), (COPY_TO_REGCLASS $val, GR)>;
 */
 
 //===----------------------------------------------------------------------===//
-// SIMD vector loads are ld16XXX
-//===----------------------------------------------------------------------===//
-defm : LdPat<"LDQ", load, v2f64>;
-defm : LdPat<"LDQ", load, v4f32>;
-defm : LdPat<"LDQ", load, v8f16>;
-defm : LdPat<"LDQ", load, v16i8>;
-defm : LdPat<"LDQ", load, v8i16>;
-defm : LdPat<"LDQ", load, v4i32>;
-defm : LdPat<"LDQ", load, v2i64>;
-
-//===----------------------------------------------------------------------===//
-// SIMD vector stores are st16XXX
-//===----------------------------------------------------------------------===//
-defm : StPat<"STQ", store, v8f16>;
-defm : StPat<"STQ", store, v4f32>;
-defm : StPat<"STQ", store, v2f64>;
-defm : StPat<"STQ", store, v16i8>;
-defm : StPat<"STQ", store, v8i16>;
-defm : StPat<"STQ", store, v4i32>;
-defm : StPat<"STQ", store, v2i64>;
-
-//===----------------------------------------------------------------------===//
 // AES (v2i64)
 //===----------------------------------------------------------------------===//
 defm AESIMC     : BUILTIN_R2<misc_opx_aesimc,     "aesimc",     int_postrisc_aesimc,     v2i64, v2i64>;

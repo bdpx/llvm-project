@@ -33,22 +33,6 @@ def : Pat<(f32 fpimm:$in), (LDI_ext (bitcast_fpimm_to_i32 $in))>;
 def : Pat<(f64 fpimm:$in), (LDI_ext (bitcast_fpimm_to_i64 $in))>;
 
 //===----------------------------------------------------------------------===//
-// floating-point loads are lduXXX
-//===----------------------------------------------------------------------===//
-defm : LdPat<"LDHZ", load, f16>;
-defm : LdPat<"LDWZ", load, f32>;
-defm : LdPat<"LDDZ", load, f64>;
-defm : LdPat<"LDQ", load, f128>;
-
-//===----------------------------------------------------------------------===//
-// floating-point stores are stXXX
-//===----------------------------------------------------------------------===//
-defm : StPat<"STH", store, f16>;
-defm : StPat<"STW", store, f32>;
-defm : StPat<"STD", store, f64>;
-defm : StPat<"STQ", store, f128>;
-
-//===----------------------------------------------------------------------===//
 // float <=> float conversions
 //===----------------------------------------------------------------------===//
 

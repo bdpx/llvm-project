@@ -455,9 +455,7 @@ bool PostriscInstrInfo::analyzeBranch(MachineBasicBlock &MBB,
 bool PostriscInstrInfo::analyzeBranchPredicate(MachineBasicBlock &MBB,
                                               MachineBranchPredicate &MBP,
                                               bool AllowModify) const {
-  // For the moment, handle only a block which ends with a cb(n)zx followed by
-  // a fallthrough.  Why this?  Because it is a common form.
-  // TODO: Should we handle b.cc?
+  // TODO: always failed, maybe not needed
   MachineBasicBlock::iterator I = MBB.getLastNonDebugInstr();
   if (I == MBB.end())
     return true;
